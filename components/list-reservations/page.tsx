@@ -7,26 +7,24 @@ export default function ListReservation() {
         <div className="w-full max-w-[75rem] flex flex-col  items-center">
             <HeaderPage title="Minhas Reservas" />
             <div className="w-full max-w-[73rem] flex flex-col  items-center">
-                <div className="w-full flex flex-row py-3 pr-2 justify-between items-center">
-                    <div className="w-22 truncate flex text-base justify-center items-center text-foreground">
+                <div className="w-full flex flex-row py-3 pl-4 justify-between items-center">
+                    <div className="w-24 truncate flex text-base justify-start text-start items-center text-foreground">
                         Data
-                </div>
-                    <div className="flex items-center">
+                    </div>
+                    <div className="w-36 flex justify-start text-start items-center">
                         Horário
                     </div>
-                    <div className="w-72 truncate flex text-base items-center text-foreground">
+                    <div className="w-72 truncate flex justify-start text-base text-start items-center text-foreground">
                         Laboratório
-                </div>
-                    <div className="w-20 truncate flex text-base items-center text-foreground">
+                    </div>
+                    <div className="w-22 truncate flex justify-start text-base text-start items-center text-foreground">
                         Local
-                </div>
-                    <div className="w-32 flex justify-center items-center">
+                    </div>
+                    <div className="w-32 flex justify-start text-start items-center">
                         Status
                     </div>
-                    <div className="flex items-center">
-                        <div className="w-30 truncate flex text-base items-center text-foreground">
-                            <br className="hidden" />
-                        </div>
+                    <div className="w-31 truncate flex text-base items-center text-foreground">
+                        <br className="hidden" />
                     </div>
                 </div>
                 <Reservation />
