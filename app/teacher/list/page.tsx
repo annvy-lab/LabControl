@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import Sidebar from "@/components/sidebar/page";
+import ListReservation from "@/components/list-reservations/page"
 import NewReservation from "@/components/new-reservation/page";
 import {
   LayoutDashboard,
@@ -54,27 +55,29 @@ export const sidebar_items: SidebarItem[] = [
   },
 ];
 
-export default function DashboardPage() {
+export default function TeacherListReservation() {
   const [activeDialogId, setActiveDialogId] = useState<string | null>(null);
 
   return (
-    <div className="flex">
-      <Sidebar
-        items={sidebar_items}
-        onDialogOpen={(id) => setActiveDialogId(id)}
-      />
-
-      {sidebar_items.map((item) => (
-        item.dialogContent && (
-          <Dialog
-            key={item.id}
-            open={activeDialogId === item.id}
-            onOpenChange={(open) => setActiveDialogId(open ? item.id : null)}
-          >
-            {item.dialogContent}
-          </Dialog>
-        )
-      ))}
+    <div className="flex flex-row">
+      <div>
+        <Sidebar
+          items={sidebar_items}
+          onDialogOpen={(id) => setActiveDialogId(id)}
+        />
+        {sidebar_items.map((item) => (
+          item.dialogContent && (
+            <Dialog
+              key={item.id}
+              open={activeDialogId === item.id}
+              onOpenChange={(open) => setActiveDialogId(open ? item.id : null)}
+            >
+              {item.dialogContent}
+            </Dialog>
+          )
+        ))}
+      </div>
+      <ListReservation />
     </div>
   );
 }

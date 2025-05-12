@@ -34,8 +34,8 @@ export default function Sidebar({ items, onDialogOpen }: SidebarProps) {
           <div className="flex items-center p-4 px-2.5 w-full h-20 gap-5.5">
             <Avatar>
               <AvatarImage alt="foto de perfil" />
-              <AvatarFallback className="text-[var(--primary)] font-bold tracking-tighter">
-                AWA
+              <AvatarFallback className="text-muted-foreground font-bold tracking-tighter">
+                A
               </AvatarFallback>
             </Avatar>
             <p className="text-sm font-medium whitespace-nowrap">User Tal</p>

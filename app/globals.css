@@ -72,7 +72,7 @@
   --highlight: rgba(69, 160, 223, 1);
   --highlight-secondary: rgba(92, 197, 11, 0.7);
   --paragraph: oklch(0.141 0.005 285.823),
-  --headline: rgba(34, 37, 37, 1),
+  --header: rgba(35, 35, 35, 1),
 }
 
 .dark {
