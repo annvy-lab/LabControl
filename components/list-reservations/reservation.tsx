@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Reservation() {
     return (
-            <div className="flex flex-row py-3 px-4 mb-4 pr-2 justify-between items-center bg-card rounded-md shadow-sm">
+        <div className="w-full flex flex-row py-3 px-4 mb-4 pr-2 justify-between items-center bg-card rounded-md shadow-sm">
                 <div className="w-22 truncate flex text-base justify-center items-center text-foreground">
                     13/03/2333
                 </div>

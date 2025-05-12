@@ -77,7 +77,9 @@ export default function TeacherListReservation() {
           )
         ))}
       </div>
+      <div className='w-full flex m-6 justify-center'>
       <ListReservation />
+      </div>
     </div>
   );
 }
