@@ -1,8 +1,8 @@
 "use client";
 import { useState } from 'react';
-import Sidebar from "@/components/sidebar/page";
-import ListReservation from "@/components/list-reservations/page"
-import NewReservation from "@/components/new-reservation/page";
+import Sidebar from "@/components/shared/sidebar/page";
+import ListReservation from "@/components/reservation/reservations-list/page"
+import NewReservation from "@/components/reservation/reservation-forms/page";
 import {
   LayoutDashboard,
   AlarmClockPlus,

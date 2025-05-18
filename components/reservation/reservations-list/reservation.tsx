@@ -1,9 +1,18 @@
 import { AlarmClock, Pencil, Copy, CircleX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import ViewReservation from "@/components/reservation/view-mode"
+
 
 export default function Reservation() {
     return (
-        <div className="w-full flex flex-row py-3 px-4 mb-4 pr-2 justify-between items-center bg-card rounded-md shadow-sm">
+<div className="w-full py-3 px-4 mb-4 flex flex-row justify-between items-center bg-card rounded-md shadow-sm">
+    <Dialog>
+        <div id="01W" className="flex-1 flex pr-4 flex-row justify-between items-center">
+            <DialogTrigger className="w-full flex flex-row justify-between items-center">
                 <div className="w-22 truncate flex text-base justify-center items-center text-foreground">
                     13/03/2333
                 </div>
@@ -25,19 +34,21 @@ export default function Reservation() {
                         <p className="text-green-500">aprovado</p>
                     </div>
                 </div>
-                <div className="flex items-center">
-                    <div className="w-30 truncate flex text-base items-center text-foreground">
-                        <Button variant="ghost" className="">
-                            <Pencil size={18} strokeWidth={2.5} className="text-secondary-foreground" />
-                        </Button>
-                        <Button variant="ghost" className="">
-                            <Copy size={18} strokeWidth={2.5} className="text-secondary-foreground" />
-                        </Button>
-                        <Button variant="ghost" className="">
-                            <CircleX size={18} strokeWidth={2.5} className="text-secondary-foreground" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
+            </DialogTrigger>
+        </div>
+            <ViewReservation />
+    </Dialog>
+    <div id="02W" className="flex flex-row justify-between items-center text-base">
+        <Button variant="ghost" className="">
+                    <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+        </Button>
+        <Button variant="ghost" className="">
+                    <Copy size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+        </Button>
+        <Button variant="ghost" className="">
+                    <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
+        </Button>
+    </div>
+</div>
     );
 }
