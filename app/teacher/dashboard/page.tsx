@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import Sidebar from "@/components/sidebar/page";
+import NewReservation from "@/components/new-reservation/page";
 import {
   LayoutDashboard,
   AlarmClockPlus,
@@ -9,10 +10,6 @@ import {
 } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 
 interface SidebarItem {
@@ -38,12 +35,7 @@ export const sidebar_items: SidebarItem[] = [
     icon: <AlarmClockPlus size={22} />,
     isDialog: true,
     dialogContent: (
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Nova Reserva</DialogTitle>
-          <DialogDescription>Awawi</DialogDescription>
-        </DialogHeader>
-      </DialogContent>
+      <NewReservation />
     ),
   },
   {
