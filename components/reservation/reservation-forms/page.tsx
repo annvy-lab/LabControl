@@ -26,7 +26,7 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import { VerticalProgress } from "@/components/new-reservation/vertical-progress-bar"
+import { VerticalProgress } from "@/components/reservation/reservation-forms/vertical-progress-bar"
 import { Switch } from "@/components/ui/switch"
 import {
     Tooltip,
@@ -81,6 +81,12 @@ const semesters = [
         label: "3º Período",
     }
 ];
+const disciplines = [
+    {
+        value: "d1",
+        label: "POO",
+    },
+];
 
 export default function NewReservation() {
     const [date, setDate] = React.useState<Date>();
@@ -90,6 +96,8 @@ export default function NewReservation() {
     const [courseValue, setCourseValue] = React.useState("");
     const [openSemester, setOpenSemester] = React.useState(false);
     const [semesterValue, setSemesterValue] = React.useState("");
+    const [openDiscipline, setOpenDiscipline] = React.useState(false);
+    const [disciplineValue, setDisciplineValue] = React.useState("");
 
     return (
         <DialogContent className="w-170 gap-4">
@@ -104,7 +112,7 @@ export default function NewReservation() {
                         value={30}
                         className=" transition-all duration-500 [&>div]:bg-[var(--highlight)] [&>div]:transition-all [&>div]:duration-500"
                     />
-                    <div className="flex flex-col gap-5 w-full">
+                    <div className="flex flex-col gap-3 w-full">
                         <div className="grid grid-cols-8 gap-6 w-full">
                             <div className="flex flex-col col-span-3 gap-2">
                                 <Label >Data:</Label>
@@ -325,9 +333,65 @@ export default function NewReservation() {
                                 </Popover>
                             </div>
                         </div>
+                        <div className="grid grid-cols-8 gap-6 w-full">
+                            <div className="flex flex-col col-span-5 gap-2">
+                            <Label >Disciplina:</Label>
+                            <Popover open={openDiscipline} onOpenChange={setOpenDiscipline}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={openDiscipline}
+                                        className="w-full justify-between truncate"
+                                    >
+                                        <span className="truncate">
+                                            {disciplineValue
+                                                ? disciplines.find((d) => d.value === disciplineValue)?.label
+                                                : "Selecionar disciplina..."}
+                                        </span>
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                                    <Command>
+                                        <CommandInput
+                                            placeholder="Pesquisar..."
+                                            className="h-9"
+                                        />
+                                        <CommandList>
+                                            <CommandEmpty>Nenhuma disciplina encontrada.</CommandEmpty>
+                                            <CommandGroup>
+                                                {disciplines.map((d) => (
+                                                    <CommandItem
+                                                        key={d.value}
+                                                        value={d.value}
+                                                        onSelect={(currentValue) => {
+                                                            setDisciplineValue(
+                                                                currentValue === disciplineValue ? "" : currentValue
+                                                            );
+                                                            setOpenDiscipline(false);
+                                                        }}
+                                                        className="truncate"
+                                                    >
+                                                        <span className="whitespace-normal break-words">{d.label}</span>
+                                                        <Check
+                                                            className={cn(
+                                                                "ml-auto",
+                                                                disciplineValue === d.value ? "opacity-100 text-primary" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                                </Popover>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-2 w-full mt-6">
+                <div className="flex flex-col gap-2 w-full mt-4">
                     <Label >Observações:</Label>
                     <Input type="text" id="note" className="w-full truncate" placeholder="Digite aqui" />
                 </div>

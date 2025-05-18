@@ -1,0 +1,54 @@
+import { AlarmClock, Pencil, Copy, CircleX } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import ViewReservation from "@/components/reservation/view-mode"
+
+
+export default function Reservation() {
+    return (
+<div className="w-full py-3 px-4 mb-4 flex flex-row justify-between items-center bg-card rounded-md shadow-sm">
+    <Dialog>
+        <div id="01W" className="flex-1 flex pr-4 flex-row justify-between items-center">
+            <DialogTrigger className="w-full flex flex-row justify-between items-center">
+                <div className="w-22 truncate flex text-base justify-center items-center text-foreground">
+                    13/03/2333
+                </div>
+                <div className="flex items-center">
+                    <div className="w-38 truncate flex text-base justify-center items-center gap-2 text-foreground bg-neutral-100 rounded-md py-0.5">
+                        <AlarmClock size={19} strokeWidth={2} className="mb-0.5" />
+                        <p>18:00</p> -
+                        <p>20:05</p>
+                    </div>
+                </div>
+                <div className="w-72 truncate flex text-base items-center text-foreground">Inovação em Tecnologia e Saúde III
+                </div>
+                <div className="w-20 truncate flex text-base items-center text-foreground">
+                    B1 A3° S12
+                </div>
+                <div className="w-32 flex justify-center items-center">
+                    <div className="flex text-base items-center text-foreground gap-2 bg-green-100 rounded-md px-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"><br className="hidden" /></div>
+                        <p className="text-green-500">aprovado</p>
+                    </div>
+                </div>
+            </DialogTrigger>
+        </div>
+            <ViewReservation />
+    </Dialog>
+    <div id="02W" className="flex flex-row justify-between items-center text-base">
+        <Button variant="ghost" className="">
+                    <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+        </Button>
+        <Button variant="ghost" className="">
+                    <Copy size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+        </Button>
+        <Button variant="ghost" className="">
+                    <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
+        </Button>
+    </div>
+</div>
+    );
+}
