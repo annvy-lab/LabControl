@@ -6,7 +6,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, Pencil, Copy, CircleX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Tooltip,
@@ -40,22 +40,22 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                 <div className="flex flex-row gap-5.5">
                     <div className="flex flex-col gap-5 w-full">
                         <div className="grid grid-cols-8 gap-6 w-full">
-                            <div className="flex flex-col col-span-2 gap-2">
+                            <div className="flex flex-col col-span-5 md:col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Data:</Label>
                                 <p>{date}</p>
                             </div>
-                            <div className="flex flex-col col-span-2 gap-2">
+                            <div className="flex flex-col col-span-3 md:col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Horário:</Label>
                                 <p>{hours}</p>
                             </div>
-                            <div className="flex flex-col col-span-2 gap-2">
+                            <div className="flex flex-col col-span-5 md:col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Status:</Label>
                                 <div className="flex w-30 text-base items-center text-foreground gap-2 bg-green-100 rounded-md px-2">
                                     <div className="w-3 h-3 bg-green-500 rounded-full"><br className="hidden" /></div>
                                     <p className="text-green-500">{status}</p>
                                 </div>
                             </div>
-                            <div className="flex flex-col col-span-2 gap-2">
+                            <div className="flex flex-col col-span-3 md:col-span-2 gap-2">
                                 <div className="flex flex-row gap-2">
                                     <Label className="text-secondary-foreground font-medium">Recorrente:</Label>
                                     <TooltipProvider>
@@ -77,7 +77,7 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                                 <Label className="text-secondary-foreground font-medium">Laboratório:</Label>
                                 <p>{labName}</p>
                             </div>
-                            <div className="flex flex-col col-span-2 gap-2">
+                            <div className="flex flex-col col-span-3 md:col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Local:</Label>
                                 <p>{labLocal}</p>
                             </div>
@@ -98,13 +98,22 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                     <Label className="text-secondary-foreground font-medium">Disciplina:</Label>
                     <p>{subject}</p>
                 </div>
-                <div className={`flex flex-col gap-2 w-full mt-6 ${notes === '' ? 'hidden' : ''}`}>
+                <div className={`flex flex-col gap-2 mt-6 ${!notes ? 'hidden' : ''}`}>
                     <Label className="text-secondary-foreground font-medium">Observações:</Label>
-                    <p>{notes}</p>
+                    <p className="break-words whitespace-pre-line">
+                        {notes}
+                    </p>
                 </div>
-                <div className="flex flex-row w-full mt-6 justify-center items-center gap-3">
-                    <Button variant="secondary" className="flex-1">Cancelar</Button>
-                    <Button className="flex-1">Finalizar</Button>
+                <div className="flex flex-row w-full justify-end items-center gap-3 mt-0">
+                    <Button variant="secondary">
+                        <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+                    </Button>
+                    <Button variant="secondary">
+                        <Copy size={18} strokeWidth={2.4} className="text-secondary-foreground" />
+                    </Button>
+                    <Button variant="secondary">
+                        <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
+                    </Button>
                 </div>
             </div>
         </DialogContent>
