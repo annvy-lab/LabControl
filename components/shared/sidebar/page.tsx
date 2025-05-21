@@ -1,81 +1,102 @@
 "use client";
-import { useState } from "react";
-import { LogOut, ArrowLeft, ArrowRight } from "lucide-react";
+
+import * as React from "react";
+import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, School, GraduationCap, Clock, ChevronsUpDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import FormsReservation from "@/components/shared/reservations/reservation-forms/page"
 
-interface SidebarProps {
-  items: {
-    id: string;
-    title: string;
-    href?: string;
-    icon: React.ReactNode;
-    isDialog?: boolean;
-  }[];
-  onDialogOpen: (id: string) => void;
-}
 
-export default function Sidebar({ items, onDialogOpen }: SidebarProps) {
-  const [isClosed, setIsClosed] = useState(false);
+type SideBarProps = {
+  userName: string;
+  userType: string;
+  reservIsOpen?: boolean;
+};
 
-  const toggleSidebar = () => {
-    setIsClosed(!isClosed);
-  };
+export default function SideBar({ userName, userType, reservIsOpen }: SideBarProps) {
+  const [isOpen, setIsOpen] = React.useState(reservIsOpen);
 
   return (
     <div
-      className={`flex flex-col justify-between min-h-lvh items-right px-2 overflow-hidden 
-        bg-[var(--sidebar)] text-[var(--background)] transition-all duration-500
-        ${isClosed ? "w-18" : "w-60"}`}
+      className="hidden md:flex flex-col w-72 justify-between min-h-lvh px-1 pt-1 overflow-hidden 
+        bg-sidebar text-background transition-all duration-500"
     >
       <div>
-        <header className="w-full h-20 gap-5">
-          <div className="flex items-center p-4 px-2.5 w-full h-20 gap-5.5">
-            <Avatar>
+        <header className="w-full flex flex-col">
+          <div className="flex items-center justify-start p-4 px-2.5 w-full h-18 gap-5.5">
+            <Avatar className="mt-0.5">
               <AvatarImage alt="foto de perfil" />
               <AvatarFallback className="text-muted-foreground font-bold tracking-tighter">
                 A
               </AvatarFallback>
             </Avatar>
-            <p className="text-sm font-medium whitespace-nowrap">User Tal</p>
-            <Button
-              onClick={toggleSidebar}
-              className={`absolute w-6 h-6 bg-[var(--sidebar)] rounded-full hover:bg-[var(--sidebar)] cursor-pointer transition-all duration-500 ${isClosed ? 'left-14' : 'left-56'
-                }`}
-            >
-              {isClosed ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
-            </Button>
+            <div className="flex flex-col gap-0.5">
+              <p className="text-sm font-medium whitespace-nowrap">{userName}</p>
+              <p className="text-xs font-medium whitespace-nowrap opacity-85">{userType}</p>
+            </div>
           </div>
           <Separator />
         </header>
-        <div className="p-4 h-[100%] gap-4 pt-9 pr-1">
-          {items.map((item) => (
-            item.isDialog ? (
-              <div
-                key={item.id}
-                onClick={() => onDialogOpen(item.id)}
-                className="flex gap-7 w-53 h-10 items-center justify-start mb-5 text-sm rounded-[0.20rem] hover:border-r-5 transition-all duration-75 cursor-pointer"
-              >
-                <div className="text-3xl">{item.icon}</div>
-                <div>{item.title}</div>
-              </div>
-            ) : (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  className="flex gap-7 w-53 h-10 items-center justify-start mb-5 text-sm rounded-[0.20rem] hover:border-r-5 transition-all duration-75"
-                >
-                  <div className="text-3xl">{item.icon}</div>
-                  <div>{item.title}</div>
+        <div className="flex flex-col p-4 h-[100%] gap-3 pt-6">
+          <a href="/admin/dashboard" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+            <LayoutPanelLeft size={20} />
+            <div>Dashboard</div>
+          </a>
+          <div className="flex flex-col gap-1">
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+              <CollapsibleTrigger className="flex gap-6 w-54 min-h-10 items-center justify-start text-sm mb-0">
+                <Clock size={20} />
+                <div className="flex w-40 items-center justify-between cursor-pointer">
+                  Reservas <ChevronsUpDown size={16} />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="flex flex-col gap-2 ml-[0.6rem] data-[state=open]:animate-slide-down data-[state=closed]:animate-slide-up border-l-1 border-card/60">
+                <Dialog>
+                  <DialogTrigger>
+                    <div className="flex gap-4 w-51 h-10 items-center mt-1 justify-start pl-4 text-xs rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                      <AlarmClockPlus size={18} />
+                      <div>Nova Reserva</div>
+                    </div>
+                  </DialogTrigger>
+                  <FormsReservation />
+                </Dialog>
+                <a href="/admin/reservations/my-reservations" className="flex gap-4 w-51 h-10 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                  <CalendarClock size={18} />
+                  <div>Minhas Reservas</div>
                 </a>
-              )
-          ))}
+                <a href="/admin/reservations/manager-reservations" className="flex gap-4 w-51 h-10 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                  <BookCheck size={18} />
+                  <div>Gerenciar Reservas</div>
+                </a>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+          <a href="/admin/cousers" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+            <GraduationCap size={20} />
+            <div>Cursos e Disciplinas</div>
+          </a>
+          <a href="/admin/users" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+            <UsersRound size={20} />
+            <div>Usuários</div>
+          </a>
+          <a href="/admin/institution" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+            <School size={20} />
+            <div>Instituição</div>
+          </a>
         </div>
       </div>
-      <footer className="w-full h-15">
+      <footer className="w-full flex flex-col gap-2">
         <Separator />
-        <div className="flex p-4 pb-0 gap-7 w-50 h-10 items-center justify-start text-sm">
+        <div className="flex p-3 px-2.5 gap-7 w-50 items-center justify-start text-sm">
           <LogOut size={22} />
           Sair
         </div>

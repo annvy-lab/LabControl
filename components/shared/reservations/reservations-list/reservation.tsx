@@ -4,7 +4,7 @@ import {
     Dialog,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import ViewReservation from "@/components/reservation/view-mode"
+import ViewReservation from "@/components/shared/reservations/view-reservation"
 
 
 export default function Reservation() {
