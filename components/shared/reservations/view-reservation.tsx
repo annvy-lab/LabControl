@@ -15,25 +15,26 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const reservation = {
-    id: 1,
-    date: "12/09/25",
-    hours: "12:00 - 22:00",
-    status: "aprovado",
+type ViewReservProps = {
+    id: number,
+    date: string,
+    hours: string,
+    status: "pendente" | "aprovado" | "reprovado" | "cancelado" | "concluído",
     isRecurring: true,
-    labName: "Inovação em Tecnologia e Saúde III",
-    labLocal: "B2 A3º S12",
-    course: "ADS - Análise e Desenvolvimento de Sistemas",
-    semester: "1º",
-    subject: "POO - Programação Orientada a Objetos",
-    notes: "Aula de Herança"
-}
+    labName: string,
+    labLocal: string,
+    course: string,
+    semester: string,
+    subject: string,
+    notes?: string
+};
 
-export default function ViewReservation() {
+
+export default function ViewReservation({ id, date, hours, status, isRecurring, labName, labLocal, course, semester, subject, notes }: ViewReservProps) {
     return (
         <DialogContent className="w-170 gap-4">
             <DialogHeader>
-                <DialogTitle className="text-2xl flex text-[var(--header)] items-center gap-3">ID #{reservation.id}</DialogTitle>
+                <DialogTitle className="text-2xl flex text-[var(--header)] items-center gap-3">ID #{id}</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col">
                 <div className="flex flex-row gap-5.5">
@@ -41,17 +42,17 @@ export default function ViewReservation() {
                         <div className="grid grid-cols-8 gap-6 w-full">
                             <div className="flex flex-col col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Data:</Label>
-                                <p>{reservation.date}</p>
+                                <p>{date}</p>
                             </div>
                             <div className="flex flex-col col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Horário:</Label>
-                                <p>{reservation.hours}</p>
+                                <p>{hours}</p>
                             </div>
                             <div className="flex flex-col col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Status:</Label>
                                 <div className="flex w-30 text-base items-center text-foreground gap-2 bg-green-100 rounded-md px-2">
                                     <div className="w-3 h-3 bg-green-500 rounded-full"><br className="hidden" /></div>
-                                    <p className="text-green-500">{reservation.status}</p>
+                                    <p className="text-green-500">{status}</p>
                                 </div>
                             </div>
                             <div className="flex flex-col col-span-2 gap-2">
@@ -68,38 +69,38 @@ export default function ViewReservation() {
                                         </Tooltip>
                                     </TooltipProvider>
                                 </div>
-                                <p>{reservation.isRecurring ? "Sim" : "Não"}</p>
+                                <p>{isRecurring ? "Sim" : "Não"}</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-8 gap-6 w-full">
                             <div className="flex flex-col col-span-5 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Laboratório:</Label>
-                                <p>{reservation.labName}</p>
+                                <p>{labName}</p>
                             </div>
                             <div className="flex flex-col col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Local:</Label>
-                                <p>{reservation.labLocal}</p>
+                                <p>{labLocal}</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-8 gap-6 w-full">
                             <div className="flex flex-col col-span-5 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Curso:</Label>
-                                <p>{reservation.course}</p>
+                                <p>{course}</p>
                             </div>
                             <div className="flex flex-col col-span-2 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Período:</Label>
-                                <p>{reservation.semester}</p>
+                                <p>{semester}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 w-full mt-6">
                     <Label className="text-secondary-foreground font-medium">Disciplina:</Label>
-                    <p>{reservation.subject}</p>
+                    <p>{subject}</p>
                 </div>
-                <div className={`flex flex-col gap-2 w-full mt-6 ${reservation.notes === '' ? 'hidden' : ''}`}>
+                <div className={`flex flex-col gap-2 w-full mt-6 ${notes === '' ? 'hidden' : ''}`}>
                     <Label className="text-secondary-foreground font-medium">Observações:</Label>
-                    <p>{reservation.notes}</p>
+                    <p>{notes}</p>
                 </div>
                 <div className="flex flex-row w-full mt-6 justify-center items-center gap-3">
                     <Button variant="secondary" className="flex-1">Cancelar</Button>

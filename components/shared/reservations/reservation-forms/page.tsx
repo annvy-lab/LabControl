@@ -26,7 +26,7 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import { VerticalProgress } from "@/components/reservation/reservation-forms/vertical-progress-bar"
+import { VerticalProgress } from "@/components/shared/reservations/reservation-forms/vertical-progress-bar"
 import { Switch } from "@/components/ui/switch"
 import {
     Tooltip,
@@ -88,7 +88,7 @@ const disciplines = [
     },
 ];
 
-export default function NewReservation() {
+export default function FormsReservation() {
     const [date, setDate] = React.useState<Date>();
     const [openLab, setOpenLab] = React.useState(false);
     const [labValue, setLabValue] = React.useState("");

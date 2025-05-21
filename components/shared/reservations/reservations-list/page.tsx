@@ -1,6 +1,6 @@
 "use client";
 import HeaderPage from "@/components/shared/header-page/page";
-import Reservation from "@/components/reservation/reservations-list/reservation"
+import Reservation from "@/components/shared/reservations/reservations-list/reservation"
 
 export default function ListReservation() {
     return (
