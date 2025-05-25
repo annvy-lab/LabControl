@@ -31,9 +31,9 @@ export function PermissionsModulesList({ permissions, onChange }: PermissionsMod
 
   return (
     <div className="w-full flex flex-col">
-      <h2 className="text-2xl font-semibold mt-6 mb-4">Módulos de Permissões</h2>
+      <h2 className="text-2xl font-semibold mt-8 mb-6">Módulos de Permissões</h2>
       {permissions.map((permission, moduleIndex) => (
-        <div key={moduleIndex} className="w-full mb-6">
+        <div key={moduleIndex} className="w-full mb-8">
           <div className="flex items-center gap-3 mb-2">
             {permission.icon}
             <h3 className="text-lg font-medium">{permission.module}</h3>

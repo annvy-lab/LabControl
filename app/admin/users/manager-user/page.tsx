@@ -33,26 +33,8 @@ const permissions = [
     ]
   },
   {
-    module: "Usuários",
-    icon: <UsersRound size={20} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      {
-        title: "Ver usuários",
-        description: "Visualizar a lista de usuários cadastrados no sistema."
-      },
-      {
-        title: "Editar usuários",
-        description: "Adicionar, editar ou remover usuários do sistema."
-      },
-      {
-        title: "Alterar permissões de usuários",
-        description: "Conceder ou revogar permissões de acesso aos usuários."
-      }
-    ]
-  },
-  {
     module: "Laboratórios",
-    icon: <FlaskConical size={20} strokeWidth={2} className="text-foreground/70"/>,
+    icon: <FlaskConical size={20} strokeWidth={2} className="text-foreground/70" />,
     actions: [
       {
         title: "Ver laboratórios",
@@ -66,7 +48,7 @@ const permissions = [
   },
   {
     module: "Cursos e Disciplinas",
-    icon: <GraduationCap size={23} strokeWidth={2} className="text-foreground/70"/>,
+    icon: <GraduationCap size={23} strokeWidth={2} className="text-foreground/70" />,
     actions: [
       {
         title: "Ver cursos e disciplinas",
@@ -87,6 +69,24 @@ const permissions = [
       {
         title: "Gerenciar turmas",
         description: "Criar e ajustar turmas associadas aos cursos e disciplinas."
+      }
+    ]
+  },
+  {
+    module: "Usuários",
+    icon: <UsersRound size={20} strokeWidth={2} className="text-foreground/70" />,
+    actions: [
+      {
+        title: "Ver usuários",
+        description: "Visualizar a lista de usuários cadastrados no sistema."
+      },
+      {
+        title: "Editar usuários",
+        description: "Adicionar, editar ou remover usuários do sistema."
+      },
+      {
+        title: "Alterar permissões de usuários",
+        description: "Conceder ou revogar permissões de acesso aos usuários."
       }
     ]
   },
