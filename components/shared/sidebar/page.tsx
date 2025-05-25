@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, School, GraduationCap, Clock, ChevronsUpDown } from "lucide-react";
+import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, School, GraduationCap, Clock, ChevronsUpDown, FlaskConical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -19,11 +19,11 @@ import FormsReservation from "@/components/shared/reservations/reservation-forms
 type SideBarProps = {
   userName: string;
   userType: string;
-  reservIsOpen?: boolean;
+  sectionIsOpen?: boolean;
 };
 
-export default function SideBar({ userName, userType, reservIsOpen }: SideBarProps) {
-  const [isOpen, setIsOpen] = React.useState(reservIsOpen);
+export default function SideBar({ userName, userType, sectionIsOpen }: SideBarProps) {
+  const [isOpen, setIsOpen] = React.useState(sectionIsOpen);
 
   return (
     <div
@@ -46,7 +46,7 @@ export default function SideBar({ userName, userType, reservIsOpen }: SideBarPro
           </div>
           <Separator />
         </header>
-        <div className="flex flex-col p-4 h-[100%] gap-3 pt-6">
+        <div className="flex flex-col p-4 h-fit gap-3 pt-6">
           <a href="/admin/dashboard" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <LayoutPanelLeft size={20} />
             <div>Dashboard</div>
@@ -62,24 +62,28 @@ export default function SideBar({ userName, userType, reservIsOpen }: SideBarPro
               <CollapsibleContent className="flex flex-col gap-2 ml-[0.6rem] data-[state=open]:animate-slide-down data-[state=closed]:animate-slide-up border-l-1 border-card/60">
                 <Dialog>
                   <DialogTrigger>
-                    <div className="flex gap-4 w-51 h-10 items-center mt-1 justify-start pl-4 text-xs rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                    <div className="flex gap-4 w-51 h-8 items-center mt-1 justify-start pl-4 text-xs rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                       <AlarmClockPlus size={18} />
                       <div>Nova Reserva</div>
                     </div>
                   </DialogTrigger>
                   <FormsReservation />
                 </Dialog>
-                <a href="/admin/reservations/my-reservations" className="flex gap-4 w-51 h-10 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                <a href="/admin/reservations/my-reservations" className="flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <CalendarClock size={18} />
                   <div>Minhas Reservas</div>
                 </a>
-                <a href="/admin/reservations/manager-reservations" className="flex gap-4 w-51 h-10 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                <a href="/admin/reservations/manager-reservations" className="flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <BookCheck size={18} />
                   <div>Gerenciar Reservas</div>
                 </a>
               </CollapsibleContent>
             </Collapsible>
           </div>
+          <a href="/admin/laboratories" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+            <FlaskConical size={20} />
+            <div>Laboratórios</div>
+          </a>
           <a href="/admin/cousers" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <GraduationCap size={20} />
             <div>Cursos e Disciplinas</div>

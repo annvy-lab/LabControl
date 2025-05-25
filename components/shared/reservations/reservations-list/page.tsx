@@ -54,13 +54,13 @@ export default function ListReservation({ data }: ListReservationProps) {
                     </Dialog>
                 </div>
                 <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center">
-                    <div className="w-32 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
+                    <div className="w-28 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
                         Data
                     </div>
-                    <div className="w-49 flex text-sm justify-start text-start items-center">
+                    <div className="w-50 flex text-sm justify-start text-start items-center">
                         Horário
                     </div>
-                    <div className="w-82 truncate flex justify-start text-sm text-start items-center text-foreground">
+                    <div className="w-80 truncate flex justify-start text-sm text-start items-center text-foreground">
                         Laboratório
                     </div>
                     <div className="w-32 pl-3 truncate flex justify-start text-sm text-start items-center text-foreground">

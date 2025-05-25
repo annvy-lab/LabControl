@@ -6,7 +6,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { CircleHelp, Pencil, Copy, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle } from "lucide-react";
+import { CircleHelp, Pencil, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Tooltip,
@@ -14,6 +14,17 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type ViewReservProps = {
     id: number,
@@ -138,12 +149,26 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                     <Button variant="secondary">
                         <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
                     </Button>
-                    <Button variant="secondary">
-                        <Copy size={18} strokeWidth={2.4} className="text-secondary-foreground" />
-                    </Button>
-                    <Button variant="secondary">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button asChild variant="secondary">
                         <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
                     </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="items-center flex gap-2">Você tem certeza disso? <TriangleAlert className="text-red-700" /></AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Essa ação é irreversível! Você terá que criar a reserva novamente e aguardar a aprovação do administrador...
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogAction>Excluir Reserva</AlertDialogAction>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                 </div>
             </div>
         </DialogContent>

@@ -2,16 +2,14 @@
 
 import CardUser from "@/components/shared/users/users-list/card-user";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Search } from "lucide-react";
 
 type User = {
     id: number;
     name: string;
     email: string;
     isActive: boolean;
-    role: "coordenador" | "professor" | "admin";
+    role: "Coordenador" | "Professor" | "Admin";
 };
 
 type ListUsersProps = {
