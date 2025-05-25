@@ -8,10 +8,10 @@ const userData = {
 
 export default function Courses() {
   return (
-    <div className="w-screen flex items-start">
+    <div className="w-screen h-screen flex">
       <Sidebar userName={userData.userName} userType={userData.userType} />
-      <div className="w-full flex flex-col items-start px-7 py-3 gap-2">
-      <HeaderPage title="Cursos e Disciplinas"/>
+      <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
+        <HeaderPage title="Cursos" />
       </div>
     </div>
   );
