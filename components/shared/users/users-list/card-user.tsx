@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Shield, Pencil, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -38,9 +39,11 @@ export default function CardUser({
         <div className="w-full p-4 pb-2 md:py-2 md:px-4 mb-4 flex-col flex md:flex-row justify-center md:justify-between items-start md:items-center bg-card/70 rounded-md shadow-sm">
             <Dialog>
                 <div className="col-span-2 flex-1 flex md:pr-4 flex-row justify-between items-center cursor-pointer">
-                    <DialogTrigger className="w-full flex flex-row justify-start md:justify-between items-center">
-                        <a href={`/admin/users/manager-user?id=${id}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`}
-                            className="w-full flex flex-col md:flex-row md:justify-between justify-start items-start md:items-center gap-2">
+                    <DialogTrigger asChild className="focus:outline-none">
+                        <Link
+                            href={`/admin/users/${id}`}
+                            className="w-full flex flex-col md:flex-row md:justify-between justify-start items-start md:items-center gap-2"
+                        >
                             <div className="w-20 truncate flex text-sm gap-2 justify-start items-center text-foreground md:pl-2">
                                 <Fingerprint size={18} strokeWidth={2} className="text-red-700" />
                                 {id}
@@ -58,7 +61,7 @@ export default function CardUser({
                                 {role}
                             </div>
                             <div className="w-32 flex justify-start items-center"></div>
-                        </a>
+                        </Link>
                     </DialogTrigger>
                 </div>
             </Dialog>

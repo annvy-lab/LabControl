@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Sidebar from "@/components/shared/sidebar/page";
+import { useParams, useRouter } from "next/navigation";
+import SideBar from "@/components/shared/sidebar/page";
 import HeaderPage from "@/components/shared/header-page/page";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,124 +10,69 @@ import { Shield, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
 import { PermissionsModulesList } from "@/components/shared/users/modules--permissions-list/page";
 import { BookCheck, UsersRound, School, GraduationCap, FlaskConical } from "lucide-react";
 import { toast } from "react-hot-toast";
-
-const userData = {
-  userName: "Lilinha da Silva",
-  userType: "Coordenador",
-};
-
+import { mockUsers } from "@/data/users";
 
 const permissions = [
   {
     module: "Gerenciar Reservas",
-    icon: <BookCheck size={22} strokeWidth={2} className="text-foreground/70"/>,
+    icon: <BookCheck size={22} strokeWidth={2} className="text-foreground/70" />,
     actions: [
-      {
-        title: "Ver solicitações",
-        description: "Visualizar as solicitações e histórico de reservas de laboratório."
-      },
-      {
-        title: "Editar reservas",
-        description: "Aprovar, reprovar ou cancelar solicitações de reserva de laboratório."
-      }
+      { title: "Ver solicitações", description: "Visualizar as solicitações e histórico de reservas de laboratório." },
+      { title: "Editar reservas", description: "Aprovar, reprovar ou cancelar solicitações de reserva de laboratório." }
     ]
   },
   {
     module: "Laboratórios",
     icon: <FlaskConical size={20} strokeWidth={2} className="text-foreground/70" />,
     actions: [
-      {
-        title: "Ver laboratórios",
-        description: "Visualizar a lista de laboratórios disponíveis na instituição."
-      },
-      {
-        title: "Editar laboratórios",
-        description: "Adicionar, editar ou remover laboratórios."
-      }
+      { title: "Ver laboratórios", description: "Visualizar a lista de laboratórios disponíveis na instituição." },
+      { title: "Editar laboratórios", description: "Adicionar, editar ou remover laboratórios." }
     ]
   },
   {
     module: "Cursos e Disciplinas",
     icon: <GraduationCap size={23} strokeWidth={2} className="text-foreground/70" />,
     actions: [
-      {
-        title: "Ver cursos e disciplinas",
-        description: "Visualizar os cursos, disciplinas e suas respectivas turmas."
-      },
-      {
-        title: "Editar cursos",
-        description: "Criar, editar ou desativar cursos oferecidos pela instituição."
-      },
-      {
-        title: "Editar disciplinas",
-        description: "Adicionar, editar ou remover disciplinas vinculadas aos cursos."
-      },
-      {
-        title: "Vincular disciplinas a professores",
-        description: "Associar disciplinas aos professores responsáveis."
-      },
-      {
-        title: "Gerenciar turmas",
-        description: "Criar e ajustar turmas associadas aos cursos e disciplinas."
-      }
+      { title: "Ver cursos e disciplinas", description: "Visualizar os cursos, disciplinas e suas respectivas turmas." },
+      { title: "Editar cursos", description: "Criar, editar ou desativar cursos oferecidos pela instituição." },
+      { title: "Editar disciplinas", description: "Adicionar, editar ou remover disciplinas vinculadas aos cursos." },
+      { title: "Vincular disciplinas a professores", description: "Associar disciplinas aos professores responsáveis." },
+      { title: "Gerenciar turmas", description: "Criar e ajustar turmas associadas aos cursos e disciplinas." }
     ]
   },
   {
     module: "Usuários",
     icon: <UsersRound size={20} strokeWidth={2} className="text-foreground/70" />,
     actions: [
-      {
-        title: "Ver usuários",
-        description: "Visualizar a lista de usuários cadastrados no sistema."
-      },
-      {
-        title: "Editar usuários",
-        description: "Adicionar, editar ou remover usuários do sistema."
-      },
-      {
-        title: "Alterar permissões de usuários",
-        description: "Conceder ou revogar permissões de acesso aos usuários."
-      }
+      { title: "Ver usuários", description: "Visualizar a lista de usuários cadastrados no sistema." },
+      { title: "Editar usuários", description: "Adicionar, editar ou remover usuários do sistema." },
+      { title: "Alterar permissões de usuários", description: "Conceder ou revogar permissões de acesso aos usuários." }
     ]
   },
   {
     module: "Configurações da Instituição",
-    icon: <School size={22} strokeWidth={2} className="text-foreground/70"/>,
+    icon: <School size={22} strokeWidth={2} className="text-foreground/70" />,
     actions: [
-      {
-        title: "Ver configurações institucionais",
-        description: "Visualizar as configurações gerais da instituição."
-      },
-      {
-        title: "Editar dados institucionais",
-        description: "Modificar informações como nome, endereço e logotipo da instituição."
-      },
-      {
-        title: "Gerenciar calendário acadêmico",
-        description: "Definir datas importantes como início e término de semestres."
-      }
+      { title: "Ver configurações institucionais", description: "Visualizar as configurações gerais da instituição." },
+      { title: "Editar dados institucionais", description: "Modificar informações como nome, endereço e logotipo da instituição." },
+      { title: "Gerenciar calendário acadêmico", description: "Definir datas importantes como início e término de semestres." }
     ]
   }
 ];
 
-
 export default function ManagerUser() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params = useParams();
+  const id = Number(params.id);
 
-  const id = searchParams.get("id") || "";
-  const name = searchParams.get("name") || "";
-  const email = searchParams.get("email") || "";
-  const role = searchParams.get("role") || "";
-
-  const userName = name || "Usuário não identificado";
+  const user = mockUsers.find((u) => u.id === id);
 
   const [formState, setFormState] = useState({
-    id,
-    name,
-    email,
-    role,
-    password: "",
+    id: user?.id || 0,
+    name: user?.name || "",
+    email: user?.email || "",
+    role: user?.role || "",
+    password: ""
   });
 
   const [permissionsChanged, setPermissionsChanged] = useState(false);
@@ -155,9 +100,9 @@ export default function ManagerUser() {
 
   return (
     <div className="w-screen h-screen flex">
-      <Sidebar userName={userData.userName} userType={userData.userType} />
+      <SideBar />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
-        <HeaderPage title={`Gerenciar ${userName}`} />
+        <HeaderPage title={`Gerenciar ${formState.name || "Usuário não identificado"}`} />
         <div className="w-full min-w-0 grid md:grid-cols-11 grid-cols-3 items-start gap-4">
           <div className="col-span-1 flex flex-col gap-2">
             <div className="flex gap-2 items-center text-secondary-foreground/80">
@@ -168,6 +113,7 @@ export default function ManagerUser() {
               value={formState.id}
               onChange={(e) => handleInputChange("id", e.target.value)}
               className="bg-card"
+              readOnly
             />
           </div>
 
@@ -232,7 +178,9 @@ export default function ManagerUser() {
               <Button variant="secondary" onClick={handleSave} className="cursor-pointer">
                 Salvar Alterações
               </Button>
-              <Button onClick={handleCancel} className="cursor-pointer">Cancelar</Button>
+              <Button onClick={handleCancel} className="cursor-pointer">
+                Cancelar
+              </Button>
             </div>
           </div>
         )}

@@ -6,26 +6,9 @@ import { Search, AlarmClockPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import FormsReservation from "@/components/shared/reservations/reservation-forms/page";
+import { mockReservations } from "@/data/reservations";
 
-type Reservation = {
-    id: number;
-    date: string;
-    hours: string;
-    status: "pendente" | "reprovado" | "cancelado" | "concluído" | "aprovado";
-    isRecurring: boolean;
-    labName: string;
-    labLocal: string;
-    course: string;
-    semester: string;
-    subject: string;
-    notes: string;
-};
-
-type ListReservationProps = {
-    data: Reservation[];
-};
-
-export default function ListReservation({ data }: ListReservationProps) {
+export default function ListReservation() {
     return (
         <div className="w-full flex flex-col items-center max-w-270 self-center">
             <div className="w-full flex flex-col items-center">
@@ -54,13 +37,13 @@ export default function ListReservation({ data }: ListReservationProps) {
                     </Dialog>
                 </div>
                 <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center">
-                    <div className="w-28 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
+                    <div className="w-30 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
                         Data
                     </div>
-                    <div className="w-50 flex text-sm justify-start text-start items-center">
+                    <div className="w-45 flex text-sm justify-start text-start items-center">
                         Horário
                     </div>
-                    <div className="w-80 truncate flex justify-start text-sm text-start items-center text-foreground">
+                    <div className="w-81 truncate flex justify-start text-sm text-start items-center text-foreground">
                         Laboratório
                     </div>
                     <div className="w-32 pl-3 truncate flex justify-start text-sm text-start items-center text-foreground">
@@ -74,7 +57,7 @@ export default function ListReservation({ data }: ListReservationProps) {
                     </div>
                 </div>
 
-                {data.map((reservation) => (
+                {mockReservations.map((reservation) => (
                     <CardReservation key={reservation.id} {...reservation} />
                 ))}
             </div>

@@ -4,26 +4,21 @@ import * as React from "react";
 import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, School, GraduationCap, Clock, ChevronsUpDown, FlaskConical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Dialog,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import FormsReservation from "@/components/shared/reservations/reservation-forms/page"
-
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import FormsReservation from "@/components/shared/reservations/reservation-forms/page";
+import { mockAuthUser } from "@/data/authUser";
 
 type SideBarProps = {
-  userName: string;
-  userType: string;
   sectionIsOpen?: boolean;
 };
 
-export default function SideBar({ userName, userType, sectionIsOpen }: SideBarProps) {
+export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
   const [isOpen, setIsOpen] = React.useState(sectionIsOpen);
+
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   return (
     <div
@@ -40,20 +35,20 @@ export default function SideBar({ userName, userType, sectionIsOpen }: SideBarPr
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm font-medium whitespace-nowrap">{userName}</p>
-              <p className="text-xs font-medium whitespace-nowrap opacity-85">{userType}</p>
+              <p className="text-sm font-medium whitespace-nowrap">{mockAuthUser.name}</p>
+              <p className="text-xs font-medium whitespace-nowrap opacity-85">{mockAuthUser.type}</p>
             </div>
           </div>
           <Separator />
         </header>
         <div className="flex flex-col p-4 h-fit gap-3 pt-6">
-          <a href="/admin/dashboard" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/dashboard" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75 focus:outline-none">
             <LayoutPanelLeft size={20} />
             <div>Dashboard</div>
           </a>
           <div className="flex flex-col gap-1">
-            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-              <CollapsibleTrigger className="flex gap-6 w-54 min-h-10 items-center justify-start text-sm mb-0">
+            <Collapsible open={isOpen}>
+              <CollapsibleTrigger onClick={handleToggle} className="focus:outline-none flex gap-6 w-54 min-h-10 items-center justify-start text-sm mb-0">
                 <Clock size={20} />
                 <div className="flex w-40 items-center justify-between cursor-pointer">
                   Reservas <ChevronsUpDown size={16} />
@@ -69,30 +64,30 @@ export default function SideBar({ userName, userType, sectionIsOpen }: SideBarPr
                   </DialogTrigger>
                   <FormsReservation />
                 </Dialog>
-                <a href="/admin/reservations/my-reservations" className="flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                <a href="/admin/reservations/my-reservations" className="focus:outline-none flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <CalendarClock size={18} />
                   <div>Minhas Reservas</div>
                 </a>
-                <a href="/admin/reservations/manager-reservations" className="flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                <a href="/admin/reservations/manager-reservations" className="focus:outline-none flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <BookCheck size={18} />
                   <div>Gerenciar Reservas</div>
                 </a>
               </CollapsibleContent>
             </Collapsible>
           </div>
-          <a href="/admin/laboratories" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/laboratories" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <FlaskConical size={20} />
             <div>Laboratórios</div>
           </a>
-          <a href="/admin/cousers" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/cousers" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <GraduationCap size={20} />
             <div>Cursos e Disciplinas</div>
           </a>
-          <a href="/admin/users" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/users" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <UsersRound size={20} />
             <div>Usuários</div>
           </a>
-          <a href="/admin/institution" className="flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/institution" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <School size={20} />
             <div>Instituição</div>
           </a>
