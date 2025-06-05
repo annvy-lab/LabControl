@@ -4,10 +4,11 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { CircleHelp, Pencil, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle, TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
     Tooltip,
     TooltipContent,
@@ -72,30 +73,30 @@ const statusConfig = {
 export default function ViewReservation({ id, date, hours, status, isRecurring, labName, labLocal, course, semester, subject, notes }: ViewReservProps) {
     const { icon: StatusIcon, color, bg } = statusConfig[status];
     return (
-        <DialogContent className="md:w-170 gap-4">
+        <DialogContent className="gap-4 md:w-150">
             <DialogHeader>
                 <DialogTitle className="text-2xl flex text-[var(--header)] items-center gap-3">ID #{id}</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col">
                 <div className="flex flex-row gap-5.5">
                     <div className="flex flex-col gap-5 w-full">
-                        <div className="grid grid-cols-4 md:gap-6 gap-6 w-full">
-                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2">
+                        <div className="grid grid-cols-4 md:gap-6 gap-6 w-full items-start justify-start">
+                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2 justify-start items-start">
                                 <Label className="text-secondary-foreground font-medium">Data:</Label>
                                 <p>{date}</p>
                             </div>
-                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2">
+                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2 justify-start items-start md:ml-[-1.5rem]">
                                 <Label className="text-secondary-foreground font-medium">Horário:</Label>
                                 <p className="whitespace-nowrap">{hours}</p>
                             </div>
-                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2">
+                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2 justify-start items-start md:ml-[-1.5rem]">
                                 <Label className="text-secondary-foreground font-medium">Status:</Label>
                                 <div className={`flex items-center gap-2 rounded-md w-fit px-2 ${bg}`}>
                                     <StatusIcon size={14} className={color} />
                                     <p className={`${color} text-sm mb-0.5`}>{status}</p>
                                 </div>
                             </div>
-                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2">
+                            <div className="flex flex-col col-span-2 md:col-span-1 gap-2 justify-start items-start">
                                 <div className="flex flex-row gap-2">
                                     <Label className="text-secondary-foreground font-medium">Recorrente:</Label>
                                     <TooltipProvider>
@@ -112,6 +113,7 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                                 <p>{isRecurring ? "Sim" : "Não"}</p>
                             </div>
                         </div>
+                        <Separator className="bg-muted-foreground/60 hidden md:flex" />
                         <div className="grid grid-cols-4 md:gap-6 gap-6 w-full">
                             <div className="flex flex-col col-span-3 gap-2">
                                 <Label className="text-secondary-foreground font-medium">Laboratório:</Label>
@@ -146,14 +148,12 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                 </div>
 
                 <div className="flex flex-row w-full justify-end items-center gap-3 mt-0">
-                    <Button variant="secondary">
+                    <DialogTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
                         <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
-                    </Button>
+                    </DialogTrigger>
                     <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="secondary">
-                        <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
-                    </Button>
+                        <AlertDialogTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
+                            <CircleX size={18} strokeWidth={2.4} className="text-red-800" />
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>

@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, School, GraduationCap, Clock, ChevronsUpDown, FlaskConical } from "lucide-react";
+import { LogOut, LayoutPanelLeft, AlarmClockPlus, CalendarClock, BookCheck, UsersRound, GraduationCap, Clock, ChevronsUpDown, FlaskConical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import FormsReservation from "@/components/shared/reservations/reservation-forms/page";
 import { mockAuthUser } from "@/data/authUser";
+import Link from "next/link";
 
 type SideBarProps = {
   sectionIsOpen?: boolean;
@@ -50,14 +51,14 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
             <Collapsible open={isOpen}>
               <CollapsibleTrigger onClick={handleToggle} className="focus:outline-none flex gap-6 w-54 min-h-10 items-center justify-start text-sm mb-0">
                 <Clock size={20} />
-                <div className="flex w-40 items-center justify-between cursor-pointer">
+                <div className="flex w-40 items-center justify-between cursor-pointer focus:outline-none">
                   Reservas <ChevronsUpDown size={16} />
                 </div>
               </CollapsibleTrigger>
-              <CollapsibleContent className="flex flex-col gap-2 ml-[0.6rem] data-[state=open]:animate-slide-down data-[state=closed]:animate-slide-up border-l-1 border-card/60">
+              <CollapsibleContent className="flex flex-col gap-2 ml-[0.6rem] data-[state=open]:animate-slide-down data-[state=closed]:animate-slide-up border-l-1 border-card/60 focus:outline-none">
                 <Dialog>
-                  <DialogTrigger>
-                    <div className="flex gap-4 w-51 h-8 items-center mt-1 justify-start pl-4 text-xs rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                  <DialogTrigger className="focus:outline-none">
+                    <div className="flex gap-4 w-51 h-8 items-center mt-1 justify-start pl-4 text-xs rounded-[0.30rem] hover:border-r-4 transition-all duration-75 focus:outline-none">
                       <AlarmClockPlus size={18} />
                       <div>Nova Reserva</div>
                     </div>
@@ -83,14 +84,10 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
             <GraduationCap size={20} />
             <div>Cursos e Disciplinas</div>
           </a>
-          <a href="/admin/users" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <Link href="/admin/users" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <UsersRound size={20} />
             <div>Usuários</div>
-          </a>
-          <a href="/admin/institution" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
-            <School size={20} />
-            <div>Instituição</div>
-          </a>
+          </Link>
         </div>
       </div>
       <footer className="w-full flex flex-col gap-2">

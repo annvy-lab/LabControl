@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import CardReservation from "@/components/shared/reservations/reservations-list/card-reservation";
 import { Input } from "@/components/ui/input";
 import { Search, AlarmClockPlus } from "lucide-react";
@@ -9,6 +10,23 @@ import FormsReservation from "@/components/shared/reservations/reservation-forms
 import { mockReservations } from "@/data/reservations";
 
 export default function ListReservation() {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredReservations = mockReservations
+        .filter((reservation) => {
+            const searchableContent = Object.values(reservation)
+                .join(" ")
+                .toLowerCase();
+            return searchableContent.includes(searchTerm.toLowerCase());
+        })
+        .sort((a, b) => {
+            const [da, ma, ya] = a.date.split("/").map(Number);
+            const [db, mb, yb] = b.date.split("/").map(Number);
+            const dateA = new Date(2000 + ya, ma - 1, da);
+            const dateB = new Date(2000 + yb, mb - 1, db);
+            return dateA.getTime() - dateB.getTime();
+        });
+
     return (
         <div className="w-full flex flex-col items-center max-w-270 self-center">
             <div className="w-full flex flex-col items-center">
@@ -22,45 +40,48 @@ export default function ListReservation() {
                             type="text"
                             placeholder="Buscar Reserva..."
                             className="pl-10 bg-primary/10 border-primary/20"
-                        />
-                    </div>
-                    <Dialog>
-                        <DialogTrigger>
-                            <Button variant="default" className="hidden md:flex">
-                                <AlarmClockPlus /> Nova Reserva
-                            </Button>
-                            <Button variant="default" className="flex md:hidden">
-                                <AlarmClockPlus />
-                            </Button>
-                        </DialogTrigger>
-                        <FormsReservation />
-                    </Dialog>
-                </div>
-                <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center">
-                    <div className="w-30 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
-                        Data
-                    </div>
-                    <div className="w-45 flex text-sm justify-start text-start items-center">
-                        Horário
-                    </div>
-                    <div className="w-81 truncate flex justify-start text-sm text-start items-center text-foreground">
-                        Laboratório
-                    </div>
-                    <div className="w-32 pl-3 truncate flex justify-start text-sm text-start items-center text-foreground">
-                        Local
-                    </div>
-                    <div className="w-32 text-sm flex justify-start text-start items-center">
-                        Status
-                    </div>
-                    <div className="w-31 truncate flex text-sm items-center text-foreground">
-                        <br className="hidden" />
-                    </div>
-                </div>
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                  </div>
+                  <Dialog>
+                      <DialogTrigger>
+                          <Button variant="default" className="hidden md:flex">
+                              <AlarmClockPlus /> Nova Reserva
+                          </Button>
+                          <Button variant="default" className="flex md:hidden">
+                              <AlarmClockPlus />
+                          </Button>
+                      </DialogTrigger>
+                      <FormsReservation />
+                  </Dialog>
+              </div>
 
-                {mockReservations.map((reservation) => (
-                    <CardReservation key={reservation.id} {...reservation} />
-                ))}
-            </div>
-        </div>
-    );
+              <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center">
+                  <div className="w-30 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
+                      Data
+                  </div>
+                  <div className="w-45 flex text-sm justify-start text-start items-center">
+                      Horário
+                  </div>
+                  <div className="w-81 truncate flex justify-start text-sm text-start items-center text-foreground">
+                      Laboratório
+                  </div>
+                  <div className="w-32 pl-3 truncate flex justify-start text-sm text-start items-center text-foreground">
+                      Local
+                  </div>
+                  <div className="w-32 text-sm flex justify-start text-start items-center">
+                      Status
+                  </div>
+                  <div className="w-31 truncate flex text-sm items-center text-foreground">
+                      <br className="hidden" />
+                  </div>
+              </div>
+
+              {filteredReservations.map((reservation) => (
+                  <CardReservation key={reservation.id} {...reservation} />
+              ))}
+          </div>
+      </div>
+  );
 }
