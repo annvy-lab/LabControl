@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Shield, Pencil, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -65,7 +64,7 @@ export default function CardUser({
                     </DialogTrigger>
                 </div>
             </Dialog>
-            <div className="w-full md:w-fit flex flex-row justify-end md:justify-between items-center text-base mt-[-1rem] md:mt-0 gap-2 md:gap-3">
+            <div className="w-full md:w-fit flex flex-row justify-end md:justify-between items-center text-base mt-[-1rem] md:mt-0 gap-2 md:gap-4">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
@@ -76,16 +75,13 @@ export default function CardUser({
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-
-                <Button variant="ghost">
+                <div className="cursor-pointer flex items-center p-2 rounded-lg">
                     <Pencil size={18} strokeWidth={2.3} className="text-secondary-foreground" />
-                </Button>
+                </div>
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger>
-                            <Button variant="ghost">
-                                <KeyRound size={18} strokeWidth={2.3} className="text-secondary-foreground" />
-                            </Button>
+                        <TooltipTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
+                            <KeyRound size={18} strokeWidth={2.3} className="text-secondary-foreground" />
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>Resetar senha</p>

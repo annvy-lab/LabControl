@@ -1,6 +1,17 @@
 "use client";
 
-import { Clock, AlarmClock, Pencil, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle, MapPin, TriangleAlert } from "lucide-react";
+import {
+    Clock,
+    AlarmClock,
+    Pencil,
+    CircleX,
+    CircleDashed,
+    CircleCheckBig,
+    CircleOff,
+    Circle,
+    MapPin,
+    TriangleAlert,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ViewReservation from "@/components/shared/reservations/view-reservation";
@@ -16,6 +27,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { mockLaboratories } from "@/data/laboratories";
 
 type ReservCardProps = {
     id: number;
@@ -23,8 +35,7 @@ type ReservCardProps = {
     hours: string;
     status: "pendente" | "aprovado" | "reprovado" | "cancelado" | "concluído";
     isRecurring: boolean;
-    labName: string;
-    labLocal: string;
+    labId: number;
     course: string;
     semester: string;
     subject: string;
@@ -65,14 +76,18 @@ export default function CardReservation({
     hours,
     status,
     isRecurring,
-    labName,
-    labLocal,
+    labId,
     course,
     semester,
     subject,
     notes,
 }: ReservCardProps) {
     const { icon: StatusIcon, color, bg } = statusConfig[status];
+
+    const lab = mockLaboratories.find((l) => l.id === labId);
+    const labName = lab?.name ?? "Laboratório desconhecido";
+    const labLocal = lab?.local ?? "Local não informado";
+
     const onSubmit = () => {
         toast.success("Reserva excluída com sucesso!");
     };
@@ -107,7 +122,9 @@ export default function CardReservation({
                     <div className="w-full flex md:hidden gap-3 flex-col justify-center items-start p-0">
                         <div className="min-w-full max-w-full flex items-start justify-between mr-0 pl-0 gap-0">
                             <div className="w-fit flex flex-col text-base gap-2 justify-start items-start text-foreground">
-                                <div className="flex text-base items-start text-foreground text-start">{date}</div>
+                                <div className="flex text-base items-start text-foreground text-start">
+                                    {date}
+                                </div>
                                 <div className="truncate flex text-sm justify-center items-center gap-2 text-foreground bg-neutral-100 rounded-md pl-2 px-2 ml-[-0.5rem]">
                                     <AlarmClock size={14} strokeWidth={2} className="mb-0.5" />
                                     <p>{hours}</p>
@@ -144,19 +161,21 @@ export default function CardReservation({
                     notes={notes}
                 />
             </Dialog>
-            <div className="hidden md:flex ml-20 flex-row justify-between items-center text-base gap-2">
-                <Button variant="ghost" className="cursor-pointer">
+
+            <div className="hidden md:flex ml-20 flex-row justify-between items-center text-base gap-3">
+                <div className="cursor-pointer flex items-center p-2 rounded-lg">
                     <Pencil size={18} strokeWidth={2.3} className="text-secondary-foreground" />
-                </Button>
+                </div>
+
                 <AlertDialog>
-                    <AlertDialogTrigger >
-                        <Button variant="ghost" className="cursor-pointer"> 
-                            <CircleX size={18} strokeWidth={2.3} className="text-red-800" />
-                        </Button>
+                    <AlertDialogTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
+                        <CircleX size={18} strokeWidth={2.3} className="text-red-800" />
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="items-bottom flex gap-2">Você tem certeza disso? <TriangleAlert className="text-red-700" /></AlertDialogTitle>
+                            <AlertDialogTitle className="items-bottom flex gap-2">
+                                Você tem certeza disso? <TriangleAlert className="text-red-700" />
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
                                 Essa ação é irreversível! Você terá que criar a reserva novamente e aguardar a aprovação de algum administrador...
                             </AlertDialogDescription>
@@ -168,19 +187,22 @@ export default function CardReservation({
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
+
             <div className="md:hidden flex flex-row w-full mt-[-1rem] justify-end items-end text-base">
                 <Button variant="ghost" className="cursor-pointer">
                     <Pencil size={18} strokeWidth={2.3} className="text-secondary-foreground" />
                 </Button>
                 <AlertDialog>
-                    <AlertDialogTrigger >
+                    <AlertDialogTrigger>
                         <Button variant="ghost" className="cursor-pointer">
                             <CircleX size={18} strokeWidth={2.3} className="text-red-800" />
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="justify-center items-bottom flex gap-2">Você tem certeza disso? <TriangleAlert className="text-red-700" /></AlertDialogTitle>
+                            <AlertDialogTitle className="justify-center items-bottom flex gap-2">
+                                Você tem certeza disso? <TriangleAlert className="text-red-700" />
+                            </AlertDialogTitle>
                             <AlertDialogDescription className="text-start">
                                 Essa ação é irreversível! Você terá que criar a reserva novamente e aguardar a aprovação de algum administrador...
                             </AlertDialogDescription>

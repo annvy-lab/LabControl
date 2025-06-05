@@ -1,16 +1,15 @@
 export const mockReservations = [
   {
     id: 2,
-    date: "15/10/25",
-    hours: "14:00 - 16:00",
+    date: "03/06/25",
+    hours: "17:00 - 18:00",
     status: "pendente" as const,
     isRecurring: false,
-    labName: "Inovação em Tecnologia e Saúde II",
-    labLocal: "B1 A2º S10",
+    labId: 1,
     course: "Engenharia de Software",
     semester: "5º",
     subject: "Inteligência Artificial",
-    notes: "Apresentação de projeto"
+    notes: "Apresentação de projeto",
   },
   {
     id: 3,
@@ -18,12 +17,11 @@ export const mockReservations = [
     hours: "06:00 - 12:00",
     status: "reprovado" as const,
     isRecurring: false,
-    labName: "Laboratório de Redes",
-    labLocal: "B3 A1º S05",
+    labId: 2,
     course: "Sistemas de Informação",
     semester: "4º",
     subject: "Redes de Computadores",
-    notes: "Configuração de roteadores"
+    notes: "Configuração de roteadores",
   },
   {
     id: 4,
@@ -31,12 +29,11 @@ export const mockReservations = [
     hours: "09:00 - 11:00",
     status: "cancelado" as const,
     isRecurring: false,
-    labName: "Laboratório de Robótica",
-    labLocal: "B2 A3º S15",
+    labId: 3,
     course: "Engenharia Mecatrônica",
     semester: "6º",
     subject: "Automação Industrial",
-    notes: "Testes com braços robóticos"
+    notes: "Testes com braços robóticos",
   },
   {
     id: 5,
@@ -44,12 +41,11 @@ export const mockReservations = [
     hours: "13:00 - 17:00",
     status: "concluído" as const,
     isRecurring: true,
-    labName: "Inovação em Tecnologia e Saúde II",
-    labLocal: "B2 A3º S10",
+    labId: 1,
     course: "Engenharia Biomédica",
     semester: "3º",
     subject: "Sistemas Embarcados",
-    notes: "Apresentação de projetos finais"
+    notes: "Apresentação de projetos finais",
   },
   {
     id: 6,
@@ -57,12 +53,11 @@ export const mockReservations = [
     hours: "09:00 - 11:00",
     status: "aprovado" as const,
     isRecurring: false,
-    labName: "Laboratório de Robótica",
-    labLocal: "B2 A3º S15",
+    labId: 3,
     course: "Engenharia Mecatrônica",
     semester: "6º",
     subject: "Automação Industrial",
-    notes: "Testes com braços robóticos"
+    notes: "Testes com braços robóticos",
   },
   {
     id: 7,
@@ -70,12 +65,11 @@ export const mockReservations = [
     hours: "08:00 - 10:00",
     status: "pendente" as const,
     isRecurring: true,
-    labName: "Laboratório de Química",
-    labLocal: "B1 A1º S02",
+    labId: 2,
     course: "Engenharia Química",
     semester: "2º",
     subject: "Química Orgânica",
-    notes: "Experimentos de síntese"
+    notes: "Experimentos de síntese",
   },
   {
     id: 8,
@@ -83,12 +77,11 @@ export const mockReservations = [
     hours: "14:00 - 18:00",
     status: "aprovado" as const,
     isRecurring: false,
-    labName: "Laboratório de Física",
-    labLocal: "B2 A2º S08",
+    labId: 3,
     course: "Física",
     semester: "1º",
     subject: "Mecânica Clássica",
-    notes: "Aula prática de lançamento oblíquo"
+    notes: "Aula prática de lançamento oblíquo",
   },
   {
     id: 9,
@@ -96,12 +89,11 @@ export const mockReservations = [
     hours: "10:00 - 12:00",
     status: "concluído" as const,
     isRecurring: false,
-    labName: "Laboratório de Biotecnologia",
-    labLocal: "B4 A1º S09",
+    labId: 1,
     course: "Biotecnologia",
     semester: "5º",
     subject: "Genética Molecular",
-    notes: "Extração de DNA"
+    notes: "Extração de DNA",
   },
   {
     id: 10,
@@ -109,12 +101,11 @@ export const mockReservations = [
     hours: "15:00 - 17:00",
     status: "reprovado" as const,
     isRecurring: false,
-    labName: "Laboratório de Eletrônica",
-    labLocal: "B3 A2º S12",
+    labId: 2,
     course: "Engenharia Elétrica",
     semester: "4º",
     subject: "Circuitos Elétricos",
-    notes: "Teste de novos componentes"
+    notes: "Teste de novos componentes",
   },
   {
     id: 11,
@@ -122,11 +113,10 @@ export const mockReservations = [
     hours: "09:00 - 12:00",
     status: "cancelado" as const,
     isRecurring: true,
-    labName: "Laboratório de Computação",
-    labLocal: "B1 A3º S07",
+    labId: 3,
     course: "Ciência da Computação",
     semester: "7º",
     subject: "Desenvolvimento Web",
-    notes: "Apresentação de sistemas finais"
-  }
+    notes: "Apresentação de sistemas finais",
+  },
 ];

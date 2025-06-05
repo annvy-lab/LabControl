@@ -31,14 +31,15 @@ import {
 import { AlarmClockPlus, CalendarIcon, CircleHelp } from "lucide-react";
 import { format } from "date-fns";
 import { VerticalProgress } from "./vertical-progress-bar";
+import { mockLaboratories } from "@/data/laboratories";
 
-const labs = [
-    { value: "lab1", label: "Laboratório 1" },
-    { value: "lab2", label: "Laboratório 2" },
-];
+const labs = mockLaboratories.map((lab) => ({
+    value: String(lab.id),
+    label: `${lab.name}`,
+}));
 
 const courses = [
-    { value: "course1", label: "Curso 1" },
+    { value: "Engenharia de Software", label: "Engenharia de Software" },
     { value: "course2", label: "Curso 2" },
 ];
 
@@ -68,6 +69,15 @@ export default function FormsReservation() {
     const { register, handleSubmit, setValue, reset, watch } = useForm<FormData>({
         resolver: zodResolver(schema),
         shouldFocusError: false,
+        defaultValues: {
+            startTime: "",
+            endTime: "",
+            lab: "",
+            course: "",
+            semester: "",
+            discipline: "",
+            notes: "",
+        },
     });
 
     const formValues = watch();
@@ -80,6 +90,29 @@ export default function FormsReservation() {
             toast.error("Por favor, selecione a data.");
             return;
         }
+
+        const today = new Date();
+        const selectedDate = new Date(date);
+        selectedDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate < today) {
+            toast.error("A data selecionada já passou.");
+            return;
+        }
+
+        const [startHour, startMinute] = data.startTime.split(":").map(Number);
+        const [endHour, endMinute] = data.endTime.split(":").map(Number);
+        const start = new Date();
+        const end = new Date();
+        start.setHours(startHour, startMinute, 0, 0);
+        end.setHours(endHour, endMinute, 0, 0);
+
+        if (start >= end) {
+            toast.error("O horário de início deve ser antes do horário de fim.");
+            return;
+        }
+
         toast.success("Reserva criada com sucesso!");
         reset();
         setDate(undefined);
@@ -121,18 +154,11 @@ export default function FormsReservation() {
         <DialogContent className="w-full md:w-170 gap-4">
             <DialogHeader>
                 <DialogTitle className="text-2xl flex text-[var(--header)] items-bottom gap-2 md:gap-3">
-                    <AlarmClockPlus
-                        size={26}
-                        strokeWidth={1.5}
-                        className="ml-[-0.6rem] text-muted-foreground"
-                    />
+                    <AlarmClockPlus size={26} strokeWidth={1.5} className="ml-[-0.6rem] text-muted-foreground" />
                     Nova Reserva
                 </DialogTitle>
             </DialogHeader>
-            <form
-                onSubmit={handleSubmit(onSubmit, onError)}
-                className="flex flex-col mt-[-0.5rem]"
-            >
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col mt-[-0.5rem]">
                 <div className="flex w-full gap-4 md:gap-6 pr-5">
                     <VerticalProgress
                         value={calculateProgress(formValues, date)}
@@ -142,9 +168,7 @@ export default function FormsReservation() {
                         <div className="flex flex-col gap-4 w-full">
                             <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
                                 <div className="flex flex-col md:col-span-3 col-span-5 gap-2">
-                                    <Label>
-                                        Data: <p className="text-red-800">*</p>
-                                    </Label>
+                                    <Label>Data: <p className="text-red-800">*</p></Label>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <Button
@@ -155,48 +179,24 @@ export default function FormsReservation() {
                                                 {date ? format(date, "PPP") : "--/--/--"}
                                             </Button>
                                         </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-auto p-0 border-primary/90"
-                                            align="center"
-                                        >
-                                            <Calendar
-                                                mode="single"
-                                                selected={date}
-                                                onSelect={setDate}
-                                                initialFocus
-                                            />
+                                        <PopoverContent className="w-auto p-0 border-primary/90" align="center">
+                                            <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
                                         </PopoverContent>
                                     </Popover>
                                 </div>
                                 <div className="flex flex-col md:col-span-2 col-span-3 gap-2">
-                                    <Label>
-                                        Início: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Input
-                                        type="time"
-                                        placeholder="Digite aqui"
-                                        {...register("startTime")}
-                                        className="w-full truncate"
-                                    />
+                                    <Label>Início: <p className="text-red-800">*</p></Label>
+                                    <Input type="time" placeholder="Digite aqui" {...register("startTime")} className="w-full truncate" />
                                 </div>
                                 <div className="flex flex-col md:col-span-2 col-span-3 gap-2">
-                                    <Label>
-                                        Fim: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Input
-                                        type="time"
-                                        placeholder="Digite aqui"
-                                        {...register("endTime")}
-                                        className="w-full truncate"
-                                    />
+                                    <Label>Fim: <p className="text-red-800">*</p></Label>
+                                    <Input type="time" placeholder="Digite aqui" {...register("endTime")} className="w-full truncate" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
                                 <div className="flex flex-col col-span-5 gap-2">
-                                    <Label>
-                                        Laboratório: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Select onValueChange={(value) => setValue("lab", value)}>
+                                    <Label>Laboratório: <p className="text-red-800">*</p></Label>
+                                    <Select value={formValues.lab} onValueChange={(value) => setValue("lab", value)}>
                                         <SelectTrigger className="w-full justify-between truncate bg-card hover:bg-card border-input">
                                             <SelectValue placeholder="Selecionar laboratório..." />
                                         </SelectTrigger>
@@ -218,26 +218,18 @@ export default function FormsReservation() {
                                                     <CircleHelp size={16} className="text-muted-foreground" />
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>
-                                                        A reserva irá se repetir toda semana, <br />
-                                                        no mesmo dia e horário.
-                                                    </p>
+                                                    <p>A reserva irá se repetir toda semana, <br />no mesmo dia e horário.</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>
                                     </div>
-                                    <Switch
-                                        checked={recurring}
-                                        onCheckedChange={setRecurring}
-                                    />
+                                    <Switch checked={recurring} onCheckedChange={setRecurring} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
                                 <div className="flex flex-col col-span-5 gap-2">
-                                    <Label>
-                                        Curso: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Select onValueChange={(value) => setValue("course", value)}>
+                                    <Label>Curso: <p className="text-red-800">*</p></Label>
+                                    <Select value={formValues.course} onValueChange={(value) => setValue("course", value)}>
                                         <SelectTrigger className="w-full justify-between truncate bg-card hover:bg-card border-input">
                                             <SelectValue placeholder="Selecionar curso..." />
                                         </SelectTrigger>
@@ -251,12 +243,8 @@ export default function FormsReservation() {
                                     </Select>
                                 </div>
                                 <div className="flex flex-col col-span-2 gap-2">
-                                    <Label>
-                                        Período: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Select
-                                        onValueChange={(value) => setValue("semester", value)}
-                                    >
+                                    <Label>Período: <p className="text-red-800">*</p></Label>
+                                    <Select value={formValues.semester} onValueChange={(value) => setValue("semester", value)}>
                                         <SelectTrigger className="w-full justify-between truncate bg-card hover:bg-card border-input">
                                             <SelectValue placeholder="Selecionar..." />
                                         </SelectTrigger>
@@ -272,21 +260,14 @@ export default function FormsReservation() {
                             </div>
                             <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
                                 <div className="flex flex-col col-span-5 gap-2">
-                                    <Label>
-                                        Disciplina: <p className="text-red-800">*</p>
-                                    </Label>
-                                    <Select
-                                        onValueChange={(value) => setValue("discipline", value)}
-                                    >
+                                    <Label>Disciplina: <p className="text-red-800">*</p></Label>
+                                    <Select value={formValues.discipline} onValueChange={(value) => setValue("discipline", value)}>
                                         <SelectTrigger className="min-w-full justify-between truncate bg-card hover:bg-card border-input">
                                             <SelectValue placeholder="Selecionar disciplina..." />
                                         </SelectTrigger>
                                         <SelectContent className="border-primary/90">
                                             {disciplines.map((discipline) => (
-                                                <SelectItem
-                                                    key={discipline.value}
-                                                    value={discipline.value}
-                                                >
+                                                <SelectItem key={discipline.value} value={discipline.value}>
                                                     {discipline.label}
                                                 </SelectItem>
                                             ))}
@@ -299,21 +280,11 @@ export default function FormsReservation() {
                 </div>
                 <div className="flex flex-col gap-2 w-full mt-4">
                     <Label>Observações:</Label>
-                    <Input
-                        type="text"
-                        placeholder="Digite aqui"
-                        {...register("notes")}
-                        className="w-full truncate"
-                    />
+                    <Input type="text" placeholder="Digite aqui" {...register("notes")} className="w-full truncate" />
                 </div>
                 <div className="flex flex-row w-full mt-6 justify-center items-center gap-3">
                     <DialogClose asChild>
-                        <Button
-                            variant="secondary"
-                            className="flex-1"
-                            type="button"
-                            onClick={handleCancel}
-                        >
+                        <Button variant="secondary" className="flex-1" type="button" onClick={handleCancel}>
                             Cancelar
                         </Button>
                     </DialogClose>
