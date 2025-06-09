@@ -130,7 +130,7 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                                 <p>{course}</p>
                             </div>
                             <div className="flex flex-col col-span-1 gap-2">
-                                <Label className="text-secondary-foreground font-medium">Período:</Label>
+                                <Label className="text-secondary-foreground font-medium">Turma:</Label>
                                 <p>{semester}</p>
                             </div>
                         </div>

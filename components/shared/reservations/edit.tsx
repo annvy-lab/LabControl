@@ -1,8 +1,12 @@
-import React, { useRef, useState } from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-hot-toast";
+import { format, parse } from "date-fns";
+
 import {
     DialogContent,
     DialogHeader,
@@ -29,46 +33,51 @@ import {
     TooltipContent,
 } from "@/components/ui/tooltip";
 import { AlarmClockPlus, CalendarIcon, CircleHelp } from "lucide-react";
-import { format } from "date-fns";
-import { VerticalProgress } from "./vertical-progress-bar";
+
 import { mockLaboratories } from "@/data/laboratories";
+import { mockReservations } from "@/data/reservations";
 
 const labs = mockLaboratories.map((lab) => ({
-    value: String(lab.id),
-    label: `${lab.name}`,
+    value: lab.name,
+    label: lab.name,
 }));
 
 const courses = [
     { value: "Engenharia de Software", label: "Engenharia de Software" },
-    { value: "course2", label: "Curso 2" },
+    { value: "Sistemas de Informação", label: "Sistemas de Informação" },
 ];
 
 const semesters = [
-    { value: "semester1", label: "2025.1" },
-    { value: "semester2", label: "2025.2" },
+    { value: "2025.1", label: "2025.1" },
+    { value: "2025.2", label: "2025.2" },
 ];
 
 const disciplines = [
-    { value: "discipline1", label: "Disciplina 1" },
-    { value: "discipline2", label: "Disciplina 2" },
+    { value: "Disciplina 1", label: "Disciplina 1" },
+    { value: "Disciplina 2", label: "Disciplina 2" },
 ];
 
 const schema = z.object({
-    startTime: z.string().min(1, "Horário de início é obrigatório"),
-    endTime: z.string().min(1, "Horário de fim é obrigatório"),
-    lab: z.string().min(1, "Laboratório é obrigatório"),
-    course: z.string().min(1, "Curso é obrigatório"),
-    semester: z.string().min(1, "Período é obrigatório"),
-    discipline: z.string().min(1, "Disciplina é obrigatório"),
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
+    lab: z.string().min(1),
+    course: z.string().min(1),
+    semester: z.string().min(1),
+    discipline: z.string().min(1),
     notes: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
 
-export default function FormsReservation() {
+type EditReservationProps = {
+    id: number;
+};
+
+export default function EditReservation({ id }: EditReservationProps) {
+    const reservation = mockReservations.find((res) => res.id === id);
+
     const { register, handleSubmit, setValue, reset, watch } = useForm<FormData>({
         resolver: zodResolver(schema),
-        shouldFocusError: false,
         defaultValues: {
             startTime: "",
             endTime: "",
@@ -80,10 +89,27 @@ export default function FormsReservation() {
         },
     });
 
-    const formValues = watch();
     const [date, setDate] = useState<Date>();
     const [recurring, setRecurring] = useState(false);
     const dialogCloseRef = useRef<HTMLButtonElement>(null);
+    const formValues = watch();
+
+    useEffect(() => {
+        if (!reservation) return;
+
+        const [startTime, endTime] = reservation.hours.split(" - ");
+        setValue("startTime", startTime);
+        setValue("endTime", endTime);
+        setValue("course", reservation.course);
+        setValue("semester", reservation.semester);
+        setValue("discipline", reservation.subject);
+        setValue("notes", reservation.notes || "");
+        setValue("lab", reservation.labId.toString());
+
+        const parsedDate = parse(reservation.date, "dd/MM/yy", new Date());
+        setDate(parsedDate);
+        setRecurring(reservation.isRecurring);
+    }, [reservation, setValue]);
 
     const onSubmit = (data: FormData) => {
         if (!date) {
@@ -113,7 +139,7 @@ export default function FormsReservation() {
             return;
         }
 
-        toast.success("Reserva criada com sucesso!");
+        toast.success("Reserva atualizada com sucesso!");
         reset();
         setDate(undefined);
         setRecurring(false);
@@ -130,40 +156,16 @@ export default function FormsReservation() {
         setRecurring(false);
     };
 
-    const calculateProgress = (formData: Partial<FormData>, date?: Date) => {
-        let filledFields = 0;
-        const requiredFields = [
-            "startTime",
-            "endTime",
-            "lab",
-            "course",
-            "semester",
-            "discipline",
-        ];
-        requiredFields.forEach((field) => {
-            if (formData[field as keyof FormData]) {
-                filledFields++;
-            }
-        });
-        if (date) filledFields++;
-        const totalFields = requiredFields.length + 1;
-        return Math.round((filledFields / totalFields) * 100);
-    };
-
     return (
         <DialogContent className="w-full md:w-170 gap-4">
             <DialogHeader>
-                <DialogTitle className="text-2xl flex text-[var(--header)] items-bottom gap-2 md:gap-3">
-                    <AlarmClockPlus size={26} strokeWidth={1.5} className="ml-[-0.6rem] text-muted-foreground" />
-                    Nova Reserva
+                <DialogTitle className="text-2xl flex text-[var(--header)] items-center gap-2 md:gap-3">
+                    <AlarmClockPlus size={26} strokeWidth={1.5} className="text-muted-foreground" />
+                    Editar #{id}
                 </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col mt-[-0.5rem]">
                 <div className="flex w-full gap-4 md:gap-6 pr-5">
-                    <VerticalProgress
-                        value={calculateProgress(formValues, date)}
-                        className="md:w-1.5 transition-all duration-500 [&>div]:bg-[var(--highlight)] [&>div]:transition-all [&>div]:duration-500"
-                    />
                     <div className="w-full flex flex-row gap-5.5">
                         <div className="flex flex-col gap-4 w-full">
                             <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
@@ -198,7 +200,13 @@ export default function FormsReservation() {
                                     <Label>Laboratório: <p className="text-red-800">*</p></Label>
                                     <Select value={formValues.lab} onValueChange={(value) => setValue("lab", value)}>
                                         <SelectTrigger className="w-full justify-between truncate bg-card hover:bg-card border-input">
-                                            <SelectValue placeholder="Selecionar laboratório..." />
+                                            <SelectValue>
+                                                {
+                                                    labs.find((lab) => lab.value === formValues.lab)?.label ||
+                                                    "Selecionar laboratório..."
+                                                }
+                                            </SelectValue>
+
                                         </SelectTrigger>
                                         <SelectContent className="border-primary/90">
                                             {labs.map((lab) => (

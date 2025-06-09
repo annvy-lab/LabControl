@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import FormsReservation from "@/components/shared/reservations/reservation-forms/page";
+import FormsReservation from "@/components/shared/reservations/form.";
 import { mockAuthUser } from "@/data/authUser";
 import Link from "next/link";
 
@@ -69,7 +69,7 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
                   <CalendarClock size={18} />
                   <div>Minhas Reservas</div>
                 </a>
-                <a href="/admin/reservations/manager-reservations" className="focus:outline-none flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+                <a href="/admin/reservations/requests" className="focus:outline-none flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <BookCheck size={18} />
                   <div>Gerenciar Reservas</div>
                 </a>
@@ -82,7 +82,7 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
           </a>
           <a href="/admin/cousers" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <GraduationCap size={20} />
-            <div>Cursos e Disciplinas</div>
+            <div>Cursos</div>
           </a>
           <Link href="/admin/users" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <UsersRound size={20} />
