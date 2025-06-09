@@ -7,6 +7,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 border-0">
@@ -42,9 +43,9 @@ export function LoginForm({
               </div>
               <div className="grid gap-3">
                 <Input className="border-sidebar border-[1.5px] rounded-3xl"
-                  id="R.A"
-                  type="R.A"
-                  placeholder="R.A"
+                  id="email"
+                  type="email"
+                  placeholder="Email"
                   required
                 />
               </div>

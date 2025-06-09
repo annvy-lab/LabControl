@@ -1,5 +1,5 @@
-import SideBar from "@/components/shared/sidebar/page";
-import HeaderPage from "@/components/shared/header-page/page";
+import SideBar from "@/components/layout/navbar";
+import HeaderPage from "@/components/layout/header";
 
 export default function Dashboard() {
   return (

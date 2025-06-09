@@ -94,7 +94,7 @@ export default function CardRequest({
   };
 
   return (
-    <div className="w-full p-4 pb-2 md:py-4 md:px-4 mb-4 flex-col flex justify-between items-start bg-card/70 rounded-md shadow-sm">
+    <div className="w-full p-4 pb-2 md:py-4 md:px-4 mb-4 flex-col flex justify-between items-start bg-card/70 rounded-md shadow-sm hover:-translate-y-1 hover:shadow-lg duration-300">
       <div className="w-full flex gap-3 flex-col justify-center items-start p-0">
         <div className="w-full flex items-start justify-between gap-0 mb-[-0.5rem]">
           <div className="flex flex-col text-base gap-2 text-foreground">
