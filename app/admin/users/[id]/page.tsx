@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import SideBar from "@/components/shared/sidebar/page";
-import HeaderPage from "@/components/shared/header-page/page";
+import SideBar from "@/components/layout/navbar";
+import HeaderPage from "@/components/layout/header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Shield, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
-import { PermissionsModulesList } from "@/components/shared/users/modules--permissions-list/page";
+import { PermissionsModulesList } from "@/components/shared/users/permissions/list";
 import { BookCheck, UsersRound, School, GraduationCap, FlaskConical } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { mockUsers } from "@/data/users";
