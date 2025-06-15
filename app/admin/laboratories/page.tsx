@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { axiosClient } from "@/services/axiosClient";
 import { useRouter } from "next/navigation";
 import { UserRoundX } from "lucide-react";
-// import CardLaboratory from "@/components/shared/laboratories/card";
+import CardLaboratory from "@/components/shared/laboratories/card";
 
 type Laboratory = {
   idLaboratorio: number;
@@ -60,15 +60,17 @@ export default function Laboratories() {
               Nenhum laboratório encontrado.
             </div>
           ) : (
-            // filteredLabs.map((lab) => (
-            //   // <CardLaboratory
-            //   //   key={lab.idLaboratorio}
-            //   //   id={lab.idLaboratorio}
-            //   //   nome={lab.nome}
-            //   //   localizacao={lab.localizacao}
-            //   // />
-            // ))
-            <br />
+            <>
+              <CardLaboratory showHeader={true} />
+              {filteredLabs.map((lab) => (
+                <CardLaboratory
+                  key={lab.idLaboratorio}
+                  id={lab.idLaboratorio}
+                  nome={lab.nome}
+                  localizacao={lab.localizacao}
+                />
+              ))}
+            </>
           )}
         </div>
       </div>
