@@ -40,6 +40,7 @@ import { AlarmClockPlus, CalendarIcon, CircleHelp } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { VerticalProgress } from "../../ui/vertical-progress-bar";
+import { getUserFromToken } from "@/services/auth";
 
 const schema = z.object({
   startTime: z.string().min(1),
@@ -76,6 +77,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
   const [date, setDate] = useState<Date>();
   const [recurring, setRecurring] = useState(false);
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
+  const user = getUserFromToken();
 
   useEffect(() => {
     axiosClient.get("/lab/labs").then(({ data }) => {
@@ -162,7 +164,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       idTurma: Number(data.turma),
       idCurso: Number(data.course),
       idDisciplina: Number(data.subject),
-      idProfessor: 1,
+      idProfessor: user?.id,
       recorrente: Boolean(recurring),
     };
 

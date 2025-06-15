@@ -7,8 +7,9 @@ import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import FormsReservation from "@/components/shared/reservations/form.";
-import { mockAuthUser } from "@/data/authUser";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getUserFromToken, logout } from "@/services/auth";
 
 type SideBarProps = {
   sectionIsOpen?: boolean;
@@ -16,11 +17,20 @@ type SideBarProps = {
 
 export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
   const [isOpen, setIsOpen] = React.useState(sectionIsOpen);
+  const [user, setUser] = React.useState(getUserFromToken());
+  const router = useRouter();
 
-  const handleToggle = () => {
-    setIsOpen((prev) => !prev);
+  React.useEffect(() => {
+    const handleStorage = () => setUser(getUserFromToken());
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const handleToggle = () => setIsOpen((prev) => !prev);
+
+  const handleLogout = () => {
+    logout();
   };
-
   return (
     <div
       className="hidden md:flex flex-col w-72 justify-between min-h-lvh px-1 pt-1 overflow-hidden 
@@ -32,12 +42,12 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
             <Avatar className="mt-0.5">
               <AvatarImage alt="foto de perfil" />
               <AvatarFallback className="text-muted-foreground font-bold tracking-tighter">
-                A
+                {user?.name?.[0] || "..."}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-0.5">
-              <p className="text-sm font-medium whitespace-nowrap">{mockAuthUser.name}</p>
-              <p className="text-xs font-medium whitespace-nowrap opacity-85">{mockAuthUser.type}</p>
+              <p className="text-sm font-medium whitespace-nowrap">{user?.name || "Usuário"}</p>
+              <p className="text-xs font-medium whitespace-nowrap opacity-85">{user?.tipo || "Tipo"}</p>
             </div>
           </div>
           <Separator />
@@ -47,6 +57,7 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
             <LayoutPanelLeft size={20} />
             <div>Dashboard</div>
           </a>
+          {(user?.tipo !== "tecnico") && (
           <div className="flex flex-col gap-1">
             <Collapsible open={isOpen}>
               <CollapsibleTrigger onClick={handleToggle} className="focus:outline-none flex gap-6 w-54 min-h-10 items-center justify-start text-sm mb-0">
@@ -69,33 +80,43 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
                   <CalendarClock size={18} />
                   <div>Minhas Reservas</div>
                 </a>
+                  {(user?.tipo !== "professor" && user?.tipo !== "tecnico") && (
                 <a href="/admin/reservations/requests" className="focus:outline-none flex gap-4 w-51 h-8 items-center justify-start text-xs pl-4 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
                   <BookCheck size={18} />
                   <div>Gerenciar Reservas</div>
                 </a>
+                  )}
               </CollapsibleContent>
             </Collapsible>
           </div>
+          )}
           <a href="/admin/laboratories" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <FlaskConical size={20} />
             <div>Laboratórios</div>
           </a>
+          {(user?.tipo !== "professor" && user?.tipo !== "tecnico") && (
           <a href="/admin/cousers" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <GraduationCap size={20} />
             <div>Cursos</div>
           </a>
+          )}
+          {(user?.tipo !== "professor" && user?.tipo !== "tecnico") && (
           <Link href="/admin/users" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <UsersRound size={20} />
             <div>Usuários</div>
           </Link>
+          )}
         </div>
       </div>
       <footer className="w-full flex flex-col gap-2">
         <Separator />
-        <div className="flex p-3 px-2.5 gap-7 w-50 items-center justify-start text-sm">
+        <button
+          onClick={handleLogout}
+          className="flex p-3 px-2.5 gap-7 w-50 cursor-pointer items-center justify-start text-sm hover:opacity-80 transition"
+        >
           <LogOut size={22} />
           Sair
-        </div>
+        </button>
       </footer>
     </div>
   );

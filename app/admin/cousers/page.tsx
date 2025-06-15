@@ -1,8 +1,24 @@
+"use client"
 import SideBar from "@/components/layout/navbar";
 import HeaderPage from "@/components/layout/header";
 import ListCousers from "@/components/shared/courses-page/list";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CoursesPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) return;
   return (
     <div className="flex h-screen w-full overflow-hidden">
       <SideBar />

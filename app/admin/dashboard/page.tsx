@@ -1,7 +1,23 @@
+"use client"
 import SideBar from "@/components/layout/navbar";
 import HeaderPage from "@/components/layout/header";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) return;
   return (
     <div className="w-screen h-screen flex">
       <SideBar />

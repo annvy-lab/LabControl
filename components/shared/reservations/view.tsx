@@ -7,7 +7,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { CircleHelp, Pencil, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle, TriangleAlert } from "lucide-react";
+import { CircleHelp, CircleX, CircleDashed, CircleCheckBig, CircleOff, Circle, TriangleAlert } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
     Tooltip,
@@ -148,9 +148,6 @@ export default function ViewReservation({ id, date, hours, status, isRecurring, 
                 </div>
 
                 <div className="flex flex-row w-full justify-end items-center gap-3 mt-0">
-                    <DialogTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
-                        <Pencil size={18} strokeWidth={2.4} className="text-secondary-foreground" />
-                    </DialogTrigger>
                     <AlertDialog>
                         <AlertDialogTrigger className="cursor-pointer flex items-center p-2 rounded-lg">
                             <CircleX size={18} strokeWidth={2.4} className="text-red-800" />

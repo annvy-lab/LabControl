@@ -6,6 +6,7 @@ import axios from "axios";
 import CardRequest from "@/components/shared/manager-reservations/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Request = {
   id: number;
@@ -29,7 +30,7 @@ export default function ManagerReservations() {
 
   useEffect(() => {
     axios
-      .get("/api/requests")
+      .get("/reservations/pending")
       .then((res) => setRequests(res.data))
       .catch(() => console.error("Erro ao carregar solicitações"))
       .finally(() => setLoading(false));
@@ -49,6 +50,19 @@ export default function ManagerReservations() {
         ? 1
         : 0
     );
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) return;
   return (
     <div className="w-screen h-screen flex">
       <SideBar sectionIsOpen={true} />

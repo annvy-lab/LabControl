@@ -21,19 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${poppins.variable} antialiased bg-[var(--background)]`}
-      >
+      <body className={`${poppins.variable} antialiased bg-[var(--background)]`}>
         <Toaster
           position="top-right"
           reverseOrder={false}
           toastOptions={{
-            success: {
-              duration: 4000,
-            },
-            error: {
-              duration: 2000,
-            },
+            success: { duration: 4000 },
+            error: { duration: 2000 },
           }}
         />
         {children}
