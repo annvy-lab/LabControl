@@ -5,8 +5,10 @@ import HeaderPage from "@/components/layout/header";
 import { useEffect, useState } from "react";
 import { axiosClient } from "@/services/axiosClient";
 import CardUser from "@/components/shared/users/card";
+import { UserRoundX } from "lucide-react"
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Usuario = {
   idUsuario: number;
@@ -22,17 +24,27 @@ export default function Users() {
   const [users, setUsers] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+      return;
+    }
+
     axiosClient.get("/users")
       .then((res) => setUsers(res.data))
       .catch(() => console.error("Erro ao carregar usuários"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [router]);
 
   const filteredUsers = users.filter((user) => {
     const searchableContent = Object.values(user).join(" ").toLowerCase();
     return searchableContent.includes(searchTerm.toLowerCase());
   });
+
+  if (loading) return;
 
   return (
     <div className="w-screen h-screen flex">
@@ -56,11 +68,11 @@ export default function Users() {
                 />
               </div>
             </div>
-
-            <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center justify-end pr-35"></div>
-
-            {loading ? (
-              <p className="text-muted-foreground">Carregando usuários...</p>
+            {filteredUsers.length === 0 ? (
+              <div className="flex flex-col gap-2 text-muted-foreground mt-6 items-center justify-center">
+                <UserRoundX size={70} strokeWidth={1.2} />
+                Nenhum usuário encontrado.
+              </div>
             ) : (
               filteredUsers.map((user) => (
                 <CardUser

@@ -10,7 +10,6 @@ import { Shield, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
 import { PermissionsModulesList } from "@/components/shared/users/permissions/list";
 import { BookCheck, UsersRound, School, GraduationCap, FlaskConical } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { mockUsers } from "@/data/users";
 
 const permissions = [
   {
@@ -97,6 +96,20 @@ export default function ManagerUser() {
     setPermissionsChanged(false);
     router.push("/admin/users");
   };
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) return;
 
   return (
     <div className="w-screen h-screen flex">

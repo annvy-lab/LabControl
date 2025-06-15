@@ -6,10 +6,12 @@ import { useEffect, useState, useCallback } from "react";
 import { axiosClient } from "@/services/axiosClient";
 import CardReservation from "@/components/shared/reservations/card";
 import { Input } from "@/components/ui/input";
-import { Search, AlarmClockPlus } from "lucide-react";
+import { Search, AlarmClockPlus, CalendarX2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import FormReservation from "@/components/shared/reservations/form.";
+import { useRouter } from "next/navigation";
+import { getUserFromToken } from "@/services/auth";
 
 type Reservation = {
   id: number;
@@ -30,10 +32,19 @@ export default function MyReservations() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+  const user = getUserFromToken();
+
   const fetchReservations = useCallback(() => {
+    if (!user?.id) {
+      setReservations([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     axiosClient
-      .get("/reservations/pending")
+      .get(`/reservations/my?professorId=${user.id}`)
       .then(({ data }) => {
         const mapped: Reservation[] = data.map((r: any) => ({
           id: r.idReserva,
@@ -55,16 +66,24 @@ export default function MyReservations() {
           notes: r.observacoes || "",
         }));
 
-
         setReservations(mapped);
       })
       .catch(() => console.error("Erro ao carregar reservas"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     fetchReservations();
   }, [fetchReservations]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/signin");
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
 
   const filteredReservations = reservations
     .filter((reservation) => {
@@ -78,6 +97,8 @@ export default function MyReservations() {
       const dateB = new Date(2000 + yb, mb - 1, db);
       return dateA.getTime() - dateB.getTime();
     });
+
+  if (loading) return null;
 
   return (
     <div className="w-screen h-screen flex">
@@ -109,7 +130,7 @@ export default function MyReservations() {
                     <AlarmClockPlus />
                   </Button>
                 </DialogTrigger>
-                <FormReservation onSuccess={fetchReservations} />
+                <FormReservation onSuccess={fetchReservations} userId={user?.id} />
               </Dialog>
             </div>
 
@@ -135,9 +156,12 @@ export default function MyReservations() {
             </div>
 
             {loading ? (
-              <p className="text-muted-foreground mt-3">Carregando reservas...</p>
+              <br />
             ) : filteredReservations.length === 0 ? (
-              <p className="text-muted-foreground mt-3">Você ainda não possui nenhuma reserva.</p>
+                <div className="flex flex-col gap-2 text-muted-foreground mt-6 items-center justify-center">
+                  <CalendarX2 size={70} strokeWidth={1.2} />
+                  Você ainda não possui nenhuma reserva.
+                </div>
             ) : (
               filteredReservations.map((reservation) => (
                 <CardReservation key={reservation.id} {...reservation} />
