@@ -14,6 +14,7 @@ import {
   CircleCheckBig,
   CircleOff,
   Circle,
+  Dot,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -27,7 +28,7 @@ export type Request = {
   id: number
   date: string
   hours: string
-  status: "pendente" | "aprovado" | "reprovado" | "cancelado" | "concluído"
+  status: "pendente" | "aprovado" | "rejeitado" | "cancelado" | "concluído"
   isRecurring: boolean
   labName: string
   labLocal: string
@@ -36,12 +37,9 @@ export type Request = {
   subject: string
   notes?: string
   responsible: string
-  requestDate: Date
-  approvedBy?: string
-  approvedDate?: Date
-  rejectedBy?: string
-  rejectedDate?: Date
-  rejectionReason?: string
+  requestDate: Date | null
+  approvalDate?: Date | null
+  rejectionReason?: string | null
 }
 
 interface CardRequestProps {
@@ -63,7 +61,7 @@ const statusConfig = {
     bg: "bg-green-100",
     label: "Aprovada",
   },
-  reprovado: {
+  rejeitado: {
     icon: CircleX,
     color: "text-red-500",
     bg: "bg-red-100",
@@ -81,10 +79,17 @@ const statusConfig = {
     bg: "bg-blue-100",
     label: "Concluída",
   },
+  default: {
+    icon: Dot,
+    color: "text-gray-500",
+    bg: "bg-gray-100",
+    label: "...",
+  },
 } as const
 
 export function CardRequest({ request, onApprove, onReject }: CardRequestProps) {
-  const { icon: StatusIcon, color, bg, label } = statusConfig[request.status]
+  const { icon: StatusIcon, color, bg, label } =
+    statusConfig[request.status as keyof typeof statusConfig] ?? statusConfig.default
 
   return (
     <Card className="w-full col-span-1 p-4 rounded-2xl shadow-sm h-full flex flex-col">
@@ -152,7 +157,6 @@ export function CardRequest({ request, onApprove, onReject }: CardRequestProps) 
                 {request.notes}
               </p>
             </div>
-
           )}
         </div>
 
@@ -161,29 +165,25 @@ export function CardRequest({ request, onApprove, onReject }: CardRequestProps) 
           <div className="w-full text-xs text-gray-500 border-t pt-3">
             <div className="w-full flex justify-between items-center">
               <span>
-                Solicitação: {format(request.requestDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} • ID: {request.id}
+                Solicitação: {request.requestDate ? format(request.requestDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : "-"} • ID: {request.id}
               </span>
               <div className="flex items-center gap-x-4">
-                {request.status === "aprovado" && request.approvedBy && request.approvedDate && (
+                {request.status === "aprovado" && request.approvalDate && (
                   <span className="text-green-700 line-clamp-1">
-                    Aprovado às{" "}
-                    {format(request.approvedDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                    Aprovado em {format(request.approvalDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                   </span>
                 )}
-                {request.status === "reprovado" && request.rejectedBy && request.rejectedDate && (
+                {request.status === "rejeitado" && request.approvalDate && (
                   <HoverCard>
                     <HoverCardTrigger className="flex items-center gap-1 underline text-red-600">
-                      <span className="text-red-600 line-clamp-1">
-                        Reprovado às{" "}
-                        {format(request.rejectedDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      <span className="text-red-600 line-clamp-1 opacity-80">
+                        Reprovado em {format(request.approvalDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                       </span>
                     </HoverCardTrigger>
                     <HoverCardContent align="end" side="top" className="w-122 rounded-2xl border-red-300">
-                      {request.rejectionReason && (
-                        <p className="text-foreground rounded text-sm">
-                          <strong>Motivo da reprovação: <br /></strong> {request.rejectionReason}
-                        </p>
-                      )}
+                      <p className="text-foreground rounded text-sm">
+                        <strong>Motivo da reprovação:</strong> {request.rejectionReason || "Não informado"}
+                      </p>
                     </HoverCardContent>
                   </HoverCard>
                 )}
@@ -206,9 +206,8 @@ export function CardRequest({ request, onApprove, onReject }: CardRequestProps) 
               </Button>
             </div>
           )}
-    </div>
+        </div>
       </CardContent>
     </Card>
-
   )
 }

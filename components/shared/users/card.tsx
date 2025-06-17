@@ -21,6 +21,24 @@ type UserCardProps = {
   data_criacao: string;
 };
 
+const roleColor: Record<string, string> = {
+  reitoria: "text-red-600",
+  auditor: "text-red-600",
+  coordenador_lab: "text-yellow-500",
+  coordenador_curso: "text-yellow-500",
+  professor: "text-primary/90",
+  tecnico: "text-gray-500",
+};
+
+const tipoLabel: Record<string, string> = {
+  reitoria: "Reitoria",
+  auditor: "Auditor",
+  coordenador_lab: "Coord. Lab.",
+  coordenador_curso: "Coord. Curso",
+  professor: "Professor",
+  tecnico: "Técnico",
+};
+
 export default function CardUser({
   id,
   nome,
@@ -28,17 +46,8 @@ export default function CardUser({
   ativo,
   tipo,
 }: UserCardProps) {
-  const roleColor =
-    tipo === "reitoria" || "auditor"
-      ? "text-red-600"
-      : tipo === "coordenador_lab" || "coordenador_curso"
-      ? "text-yellow-500"
-      : tipo === "tecnico"
-      ? "text-gray-500"
-      : "text-primary/90";
-
   return (
-    <Card className="w-full p-4 pb-2 md:py-2 md:px-4 mb-4 flex-col flex md:flex-row justify-center md:justify-between items-start md:items-center shadow-sm hover:-translate-y-1 hover:shadow-lg duration-300">
+    <Card className="w-full p-4 pb-2 md:py-2 md:px-4 mb-0 flex-col flex md:flex-row justify-center md:justify-between items-start md:items-center shadow-sm hover:-translate-y-1 hover:shadow-lg duration-300">
       <Dialog>
         <div className="col-span-2 flex-1 flex md:pr-4 flex-row justify-between items-center cursor-pointer">
           <DialogTrigger asChild className="focus:outline-none">
@@ -59,8 +68,13 @@ export default function CardUser({
                 <p className="w-60 mb-0.5 truncate text-start">{email}</p>
               </div>
               <div className="w-30 truncate flex text-sm gap-2 justify-start items-center text-foreground">
-                <Shield size={18} strokeWidth={2} className={roleColor} />
-                {tipo}
+                <Shield
+                  size={18}
+                  strokeWidth={2}
+                  className={roleColor[tipo] || "text-primary/90"}
+                />
+                {/* Se não encontrar o label, mostra o tipo formatado */}
+                {tipoLabel[tipo] || tipo.charAt(0).toUpperCase() + tipo.slice(1).replace(/_/g, " ")}
               </div>
               <div className="w-32 flex justify-start items-center" />
             </Link>

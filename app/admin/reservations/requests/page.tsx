@@ -6,14 +6,26 @@ import HeaderPage from "@/components/layout/header"
 import { CardRequest, Request } from "@/components/shared/manager-reservations/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Search, ClockFading, Funnel } from "lucide-react"
 import toast from "react-hot-toast"
 import { axiosClient } from "@/services/axiosClient"
 import { getUserFromToken } from "@/services/auth"
-import { format } from "date-fns"
 
 export default function ManagerReservations() {
   const [requests, setRequests] = useState<Request[]>([])
@@ -23,13 +35,18 @@ export default function ManagerReservations() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null)
   const [rejectionReason, setRejectionReason] = useState("")
+  const [isMounted, setIsMounted] = useState(false)
   const user = getUserFromToken()
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const fetchRequests = async () => {
     setLoading(true)
     try {
-      const isAdmin = ["reitoria", "auditor", "admin"].includes(user?.tipo || user?.role)
-      const url = isAdmin ? "/reservations/pending" : "/reservations/pending"
+      const isAdmin = ["reitoria", "auditor", "admin"].includes(user?.tipo)
+      const url = isAdmin ? "/reservations/all" : "/reservations/all"
       const { data } = await axiosClient.get(url)
       const formatted = data.map((r: any) => ({
         id: r.idReserva || r.id,
@@ -53,23 +70,26 @@ export default function ManagerReservations() {
         subject: r.Disciplina?.nome || "",
         notes: r.observacoes || "",
         responsible: r.Professor?.Usuario?.nome || "",
-        requestDate: r.data_solicitacao ? new Date(r.data_solicitacao) : new Date(),
+        requestDate: r.data_solicitacao ? new Date(r.data_solicitacao) : null,
         approvalDate: r.data_aprovacao ? new Date(r.data_aprovacao) : null,
         rejectionReason: r.motivo_rejeicao || "",
       }))
       setRequests(formatted)
     } catch (e) {
+      setRequests([])
       console.error("Erro ao carregar reservas:", e)
       toast.error("Erro ao carregar reservas")
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
-    fetchRequests()
+    if (isMounted) fetchRequests()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isMounted])
 
+  // FILTRO
   const filteredRequests = requests.filter((req) => {
     const matchesStatus = filterStatus === "all" || req.status === filterStatus
     const matchesSearch =
@@ -78,6 +98,18 @@ export default function ManagerReservations() {
       req.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.subject.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesStatus && matchesSearch
+  })
+
+  // ORDENAR: pendente sempre no topo, e dentro de cada status por ordem de solicitação (mais antiga primeiro)
+  const sortedRequests = [...filteredRequests].sort((a, b) => {
+    // Pendente sempre primeiro
+    if (a.status === "pendente" && b.status !== "pendente") return -1
+    if (a.status !== "pendente" && b.status === "pendente") return 1
+
+    // Ambos com mesmo status, ordenar por requestDate (mais antiga primeiro)
+    const dateA = a.requestDate ? a.requestDate.getTime() : 0
+    const dateB = b.requestDate ? b.requestDate.getTime() : 0
+    return dateA - dateB
   })
 
   const handleApprove = async (id: number) => {
@@ -117,12 +149,14 @@ export default function ManagerReservations() {
     }
   }
 
+  if (!isMounted) return null
+
   return (
     <div className="w-screen h-screen flex">
       <SideBar sectionIsOpen={true} />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
         <HeaderPage title="Gerenciar Reservas" />
-        <div className="w-full flex flex-col items-center max-w-270 self-center">
+        <div className="w-full flex flex-col items-center max-w-270 self-center pb-30">
           <div className="flex w-full self-start relative md:mb-1 mb-4 gap-4 md:gap-6">
             <div className="flex-1">
               <div className="relative">
@@ -155,21 +189,20 @@ export default function ManagerReservations() {
 
           <div className="w-full overflow-auto grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {loading ? (
-              <div className="col-span-full text-center py-12">Carregando...</div>
-            ) : filteredRequests.length > 0 ? (
-              filteredRequests.map((request) => (
+              <br />
+            ) : sortedRequests.length > 0 ? (
+              sortedRequests.map((request) => (
                 <CardRequest
                   key={request.id}
                   request={request}
                   onApprove={handleApprove}
                   onReject={handleReject}
-                  approvalDate={request.approvalDate}
                 />
               ))
             ) : (
               <div className="col-span-full text-center text-foreground py-12">
                 <ClockFading size={65} strokeWidth={1.2} className="text-muted-foreground mx-auto mb-2" />
-                Nenhuma solicitação encontrada
+                    Nenhuma solicitação encontrada.
               </div>
             )}
           </div>

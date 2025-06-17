@@ -37,7 +37,7 @@ export default function ReservationCancelDialog({
         canceladorId: user?.id,
       });
       toast.success("Reserva cancelada com sucesso!");
-      onSuccess?.();
+      if (typeof onSuccess === "function") onSuccess(); // recarrega a lista ao cancelar!
     } catch (err: any) {
       toast.error("Não foi possível cancelar a reserva.");
     } finally {
@@ -73,7 +73,7 @@ export default function ReservationCancelDialog({
             onClick={handleCancelReservation}
             disabled={loading}
           >
-            {loading ? "Cancelando..." : "Cancelar Reserva"}
+            {loading ? "Carregando..." : "Cancelar Reserva"}
           </AlertDialogAction>
           <AlertDialogCancel className="border bg-background shadow-xs text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
             Fechar

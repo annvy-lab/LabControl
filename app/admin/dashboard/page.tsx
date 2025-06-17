@@ -1,4 +1,5 @@
 "use client";
+
 import SideBar from "@/components/layout/navbar";
 import HeaderPage from "@/components/layout/header";
 import { useEffect, useState } from "react";
@@ -36,28 +37,24 @@ export default function Dashboard() {
     const user = getUserFromToken();
     if (!user?.id) return;
 
-    // Verifica se é reitor ou auditor
     const isAdmin = ["reitoria", "auditor"].includes(user.tipo);
-
     const fetchUrl = isAdmin
-      ? `/reservations/pending`
+      ? `/reservations/all`
       : `/reservations/my?professorId=${user.id}`;
 
     axiosClient.get(fetchUrl).then(({ data }) => {
-      // Filtra apenas aprovadas e reprovadas para notificações
       const filtered = (data || []).filter(
         (r: any) =>
           r.status === "aprovado" ||
           r.status === "reprovado" ||
           r.status === "rejeitado"
       );
-      // Notificações
+
       const generatedNotifications = filtered.map((r: any) => ({
         id: r.idReserva || r.id,
         status: r.status === "rejeitado" ? "reprovado" : r.status,
         labName: r.Laboratorio?.nome || "-",
-        start: r.data_hora_inicio,
-        end: r.data_hora_fim,
+        dataAprovacao: r.data_aprovacao,
       }));
       setNotifications(generatedNotifications);
 
@@ -81,7 +78,6 @@ export default function Dashboard() {
 
   if (loading) return null;
 
-  // Dados para o ViewReservation
   const dialogData = selectedReservation
     ? {
       id: selectedReservation.id,
@@ -141,9 +137,7 @@ export default function Dashboard() {
       <SideBar />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
         <HeaderPage title="Dashboard" />
-
-        <div className="flex flex-1 w-full h-full gap-6">
-          {/* Calendário de Reservas */}
+        <div className="flex flex-1 w-full h-full gap-6 pb-25">
           <div className="w-9/12 bg-background flex flex-col text-base">
             <div className="flex-1 min-h-[520px] text-base">
               <FullCalendar
@@ -168,7 +162,6 @@ export default function Dashboard() {
               />
             </div>
           </div>
-          {/* Painel de Notificações */}
           <Card className="w-3/12 flex flex-col bg-card/70 gap-1 p-0 pb-4 h-fit max-h-12/12">
             <div className="flex items-center gap-2 p-4 pb-0">
               <h2 className="text-lg font-medium">Notificações</h2>
@@ -207,12 +200,9 @@ export default function Dashboard() {
                       #{n.id} - {n.labName}
                     </p>
                     <span className="text-xs text-muted-foreground">
-                      {n.start && n.end
-                        ? `${format(new Date(n.start), "dd/MM/yyyy")} - ${format(
-                          new Date(n.start),
-                          "HH:mm"
-                        )} às ${format(new Date(n.end), "HH:mm")}`
-                        : ""}
+                      {n.dataAprovacao
+                        ? `Aprovação: ${format(new Date(n.dataAprovacao), "dd/MM/yyyy 'às' HH:mm")}`
+                        : "Aguardando aprovação"}
                     </span>
                   </div>
                 ))
@@ -220,7 +210,6 @@ export default function Dashboard() {
             </div>
           </Card>
         </div>
-
         <Dialog open={viewOpen} onOpenChange={setViewOpen}>
           {dialogData && <ViewReservation {...dialogData} />}
         </Dialog>

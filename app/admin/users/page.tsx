@@ -49,7 +49,7 @@ export default function Users() {
       <SideBar />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2 w-full">
         <HeaderPage title="Usuários" />
-        <div className="w-full flex flex-col items-center max-w-270 self-center">
+        <div className="w-full flex flex-col items-center max-w-270 self-center pb-25">
           <div className="flex w-full self-start relative mb-5 gap-4 md:gap-6">
             <div className="flex-1">
               <div className="relative">
@@ -70,7 +70,6 @@ export default function Users() {
               <span className="col-span-3 text-sm text-foreground">E-mail</span>
               <span className="col-span-2 text-sm text-foreground">Tipo</span>
               <span className="col-span-1 text-sm text-foreground">Ativo</span>
-              <span className="col-span-2 text-sm text-foreground text-right pr-4">Criado em</span>
             </div>
           </div>
           {filteredUsers.length === 0 ? (

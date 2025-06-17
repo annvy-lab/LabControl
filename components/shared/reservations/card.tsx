@@ -2,7 +2,6 @@
 
 import {
   Clock,
-  AlarmClock,
   CircleX,
   CircleDashed,
   CircleCheckBig,
@@ -19,7 +18,14 @@ type ReservCardProps = {
   id: number;
   date: string;
   hours: string;
-  status: "pendente" | "aprovado" | "reprovado" | "rejeitado" | "cancelado" | "concluido" | "concluído";
+  status:
+  | "pendente"
+  | "aprovado"
+  | "reprovado"
+  | "rejeitado"
+  | "cancelado"
+  | "concluido"
+  | "concluído";
   isRecurring: boolean;
   labName: string;
   labLocal: string;
@@ -27,7 +33,7 @@ type ReservCardProps = {
   semester: string;
   subject: string;
   notes?: string;
-  onDeleteSuccess?: () => void;
+  reloadReservations?: () => void; // Aqui!
 };
 
 const statusConfig = {
@@ -56,7 +62,6 @@ const statusConfig = {
     color: "text-blue-500",
     bg: "bg-blue-100",
   },
-  // Fallback para status fora do padrão
   rejeitado: {
     icon: CircleX,
     color: "text-red-500",
@@ -87,6 +92,7 @@ export default function CardReservation({
   semester,
   subject,
   notes,
+  reloadReservations, // Aqui!
 }: ReservCardProps) {
   const { icon: StatusIcon, color, bg } = statusConfig[status] ?? fallbackConfig;
 
@@ -131,7 +137,8 @@ export default function CardReservation({
         />
       </Dialog>
       <div className="w-12 flex items-center justify-center">
-        <ReservationCancelDialog reservationId={id} />
+        {/* Passe a função de reload como onSuccess */}
+        <ReservationCancelDialog reservationId={id} onSuccess={reloadReservations} />
       </div>
     </Card>
   );
