@@ -48,7 +48,7 @@ export default function Laboratories() {
       <SideBar />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2 w-full">
         <HeaderPage title="Laboratórios" />
-        <div className="w-full flex flex-col items-center max-w-270 self-center">
+        <div className="w-full flex flex-col items-center max-w-270 self-center pb-25">
           <div className="flex w-full self-start relative mb-5 gap-4 md:gap-6">
             <div className="flex-1">
               <div className="relative">

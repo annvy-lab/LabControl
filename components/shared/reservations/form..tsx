@@ -67,7 +67,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
   const [courses, setCourses] = useState<{ value: string; label: string }[]>([]);
   const [subjects, setSubjects] = useState<{ value: string; label: string }[]>([]);
   const [semesters, setSemesters] = useState<{ value: string; label: string }[]>([]);
-  const [coursesFull, setCoursesFull] = useState<any[]>([]); // salva a resposta bruta dos cursos
+  const [coursesFull, setCoursesFull] = useState<any[]>([]);
   const [date, setDate] = useState<Date>();
   const [recurring, setRecurring] = useState(false);
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
@@ -85,16 +85,14 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
 
     if (userId) {
       axiosClient.get(`/course/professor/${user.id}/courses`).then(({ data }) => {
-        console.log("Resposta da API /course/professor/:id/courses:", data); // 👈 Aqui!
         setCoursesFull(data);
         setCourses(data.map((course: any) => ({
-        value: String(course.idCurso),
-        label: course.nome,
+          value: String(course.idCurso),
+          label: course.nome,
         })));
-    });
+      });
     }
   }, [userId]);
-
 
   useEffect(() => {
     const courseId = formValues.course;
@@ -115,6 +113,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
     setValue("turma", "");
   }, [formValues.course, coursesFull, setValue]);
 
+  // Aqui está o ajuste para buscar as turmas corretamente do Turma_Disciplina:
   useEffect(() => {
     const courseId = formValues.course;
     const subjectId = formValues.subject;
@@ -127,10 +126,21 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
     const subjectObj = (courseObj?.Disciplina || []).find(
       (d: any) => String(d.idDisciplina) === subjectId
     );
-    setSemesters((subjectObj?.Turmas || []).map((turma: any) => ({
-      value: String(turma.idTurma),
-      label: `${turma.nome} - ${turma.periodo_letivo}`,
-    })));
+
+    // Busca as turmas do array Turma_Disciplina da disciplina selecionada
+    const turmas =
+      (subjectObj?.Turma_Disciplina || [])
+        .map((td: any) => td.Turma)
+        .filter(
+          (turma: any, idx: number, arr: any[]) =>
+            arr.findIndex((t) => t.idTurma === turma.idTurma) === idx
+        )
+        .map((turma: any) => ({
+          value: String(turma.idTurma),
+          label: `${turma.nome} - ${turma.periodo_letivo}`,
+        }));
+
+    setSemesters(turmas);
     setValue("turma", "");
   }, [formValues.subject, formValues.course, coursesFull, setValue]);
 
@@ -162,7 +172,6 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       toast.error("O horário de início deve ser antes do horário de fim.");
       return;
     }
-
     const payload = {
       data_hora_inicio: startDate,
       data_hora_fim: endDate,

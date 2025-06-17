@@ -1,202 +1,93 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import SideBar from "@/components/layout/navbar";
 import HeaderPage from "@/components/layout/header";
+import { useEffect, useState } from "react";
+import { axiosClient } from "@/services/axiosClient";
+import { Fingerprint, UserRound, Shield, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Shield, Fingerprint, UserRound, Mail, KeyRound } from "lucide-react";
-import { PermissionsModulesList } from "@/components/shared/users/permissions/list";
-import { BookCheck, UsersRound, School, GraduationCap, FlaskConical } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { useParams, useRouter } from "next/navigation";
 
-const permissions = [
-  {
-    module: "Gerenciar Reservas",
-    icon: <BookCheck size={22} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      { title: "Ver solicitações", description: "Visualizar as solicitações e histórico de reservas de laboratório." },
-      { title: "Editar reservas", description: "Aprovar, reprovar ou cancelar solicitações de reserva de laboratório." }
-    ]
-  },
-  {
-    module: "Laboratórios",
-    icon: <FlaskConical size={20} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      { title: "Ver laboratórios", description: "Visualizar a lista de laboratórios disponíveis na instituição." },
-      { title: "Editar laboratórios", description: "Adicionar, editar ou remover laboratórios." }
-    ]
-  },
-  {
-    module: "Cursos e Disciplinas",
-    icon: <GraduationCap size={23} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      { title: "Ver cursos e disciplinas", description: "Visualizar os cursos, disciplinas e suas respectivas turmas." },
-      { title: "Editar cursos", description: "Criar, editar ou desativar cursos oferecidos pela instituição." },
-      { title: "Editar disciplinas", description: "Adicionar, editar ou remover disciplinas vinculadas aos cursos." },
-      { title: "Vincular disciplinas a professores", description: "Associar disciplinas aos professores responsáveis." },
-      { title: "Gerenciar turmas", description: "Criar e ajustar turmas associadas aos cursos e disciplinas." }
-    ]
-  },
-  {
-    module: "Usuários",
-    icon: <UsersRound size={20} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      { title: "Ver usuários", description: "Visualizar a lista de usuários cadastrados no sistema." },
-      { title: "Editar usuários", description: "Adicionar, editar ou remover usuários do sistema." },
-      { title: "Alterar permissões de usuários", description: "Conceder ou revogar permissões de acesso aos usuários." }
-    ]
-  },
-  {
-    module: "Configurações da Instituição",
-    icon: <School size={22} strokeWidth={2} className="text-foreground/70" />,
-    actions: [
-      { title: "Ver configurações institucionais", description: "Visualizar as configurações gerais da instituição." },
-      { title: "Editar dados institucionais", description: "Modificar informações como nome, endereço e logotipo da instituição." },
-      { title: "Gerenciar calendário acadêmico", description: "Definir datas importantes como início e término de semestres." }
-    ]
-  }
-];
+type Usuario = {
+  idUsuario: number;
+  nome: string;
+  email: string;
+  tipo: string;
+  ativo: boolean;
+  data_criacao: string;
+};
 
-export default function ManagerUser() {
+const roleColor: Record<string, string> = {
+  reitoria: "text-red-600",
+  auditor: "text-red-600",
+  coordenador_lab: "text-yellow-500",
+  coordenador_curso: "text-yellow-500",
+  professor: "text-primary/90",
+  tecnico: "text-gray-500",
+};
+
+function formatTipo(tipo: string) {
+  return tipo.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+export default function ManagerUserPage() {
   const router = useRouter();
   const params = useParams();
   const id = Number(params.id);
 
-  const user = mockUsers.find((u) => u.id === id);
-
-  const [formState, setFormState] = useState({
-    id: user?.id || 0,
-    name: user?.name || "",
-    email: user?.email || "",
-    role: user?.role || "",
-    password: ""
-  });
-
-  const [permissionsChanged, setPermissionsChanged] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormState((prev) => ({ ...prev, [field]: value }));
-    setIsDirty(true);
-  };
-
-  const handlePermissionsChange = () => {
-    setPermissionsChanged(true);
-  };
-
-  const handleCancel = () => {
-    router.push("/admin/users");
-  };
-
-  const handleSave = () => {
-    toast.success("Alterações salvas com sucesso!");
-    setIsDirty(false);
-    setPermissionsChanged(false);
-    router.push("/admin/users");
-  };
-
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<Usuario | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/auth/signin");
-    } else {
-      setLoading(false);
+      return;
     }
-  }, []);
+    axiosClient.get(`/users/${id}`)
+      .then((res) => setUser(res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, [id, router]);
 
-  if (loading) return;
+  if (loading) return null;
+  if (!user) return <div className="p-8">Usuário não encontrado.</div>;
 
   return (
     <div className="w-screen h-screen flex">
       <SideBar />
-      <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
-        <HeaderPage title={`Gerenciar ${formState.name || "Usuário não identificado"}`} />
-        <div className="w-full min-w-0 grid md:grid-cols-11 grid-cols-3 items-start gap-4">
-          <div className="col-span-1 flex flex-col gap-2">
+      <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2 w-full">
+        <HeaderPage title={`Usuário: ${user.nome || "Não identificado"}`} />
+        <div className="w-full min-w-0 grid md:grid-cols-12 grid-cols-2 gap-4">
+          <div className="col-span-2 flex flex-col gap-2">
             <div className="flex gap-2 items-center text-secondary-foreground/80">
               <Fingerprint size={18} strokeWidth={2} className="text-red-700" />
               R.A
             </div>
-            <Input
-              value={formState.id}
-              onChange={(e) => handleInputChange("id", e.target.value)}
-              className="bg-card"
-              readOnly
-            />
+            <Input value={user.idUsuario} className="bg-card" readOnly />
           </div>
-
-          <div className="md:col-span-3 col-span-2 flex flex-col gap-2">
+          <div className="col-span-4 flex flex-col gap-2">
             <div className="flex gap-2 items-center text-secondary-foreground/80">
               <UserRound size={18} strokeWidth={2} className="text-foreground/80" />
               Nome
             </div>
-            <Input
-              value={formState.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              className="bg-card"
-            />
+            <Input value={user.nome} className="bg-card" readOnly />
           </div>
-
-          <div className="md:col-span-2 col-span-3 flex flex-col gap-2">
+          <div className="col-span-3 flex flex-col gap-2">
             <div className="flex gap-2 items-center text-secondary-foreground/80">
-              <Shield size={18} strokeWidth={2} className="text-primary/90" />
-              Cargo
+              <Shield size={18} strokeWidth={2} className={roleColor[user.tipo] || "text-primary/90"} />
+              Tipo
             </div>
-            <Input
-              value={formState.role}
-              onChange={(e) => handleInputChange("role", e.target.value)}
-              className="bg-card"
-            />
+            <Input value={formatTipo(user.tipo)} className="bg-card" readOnly />
           </div>
-
-          <div className="md:col-span-3 col-span-3 flex flex-col gap-2">
+          <div className="col-span-3 flex flex-col gap-2">
             <div className="flex gap-2 items-center text-secondary-foreground/80">
               <Mail size={17} strokeWidth={2} className="text-neutral-600" />
               Email
             </div>
-            <Input
-              value={formState.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              className="bg-card"
-            />
-          </div>
-
-          <div className="md:col-span-2 col-span-3 flex flex-col gap-2">
-            <div className="flex gap-2 items-center text-secondary-foreground/80">
-              <KeyRound size={18} strokeWidth={2} className="text-neutral-600" />
-              Senha
-            </div>
-            <Input
-              value={formState.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              placeholder="Redefinir senha"
-              className="bg-card"
-            />
+            <Input value={user.email} className="bg-card" readOnly />
           </div>
         </div>
-
-        <PermissionsModulesList
-          permissions={permissions}
-          onChange={handlePermissionsChange}
-        />
-
-        {(isDirty || permissionsChanged) && (
-          <div className="fixed bottom-0 right-0 m-4">
-            <div className="flex gap-3">
-              <Button variant="secondary" onClick={handleSave} className="cursor-pointer">
-                Salvar Alterações
-              </Button>
-              <Button onClick={handleCancel} className="cursor-pointer">
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

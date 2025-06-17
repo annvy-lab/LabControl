@@ -13,7 +13,15 @@ import FormReservation from "@/components/shared/reservations/form.";
 import { useRouter } from "next/navigation";
 import { getUserFromToken } from "@/services/auth";
 
-type ReservationStatus = "pendente" | "aprovado" | "reprovado" | "rejeitado" | "cancelado" | "concluido" | "concluído";
+type ReservationStatus =
+  | "pendente"
+  | "aprovado"
+  | "reprovado"
+  | "rejeitado"
+  | "cancelado"
+  | "concluido"
+  | "concluído";
+
 type Reservation = {
   id: number;
   date: string;
@@ -41,59 +49,57 @@ export default function MyReservations() {
   const router = useRouter();
   const user = getUserFromToken();
 
-  const fetchReservations = useCallback(() => {
+  const reloadReservations = useCallback(async () => {
     if (!user?.id) {
       setReservations([]);
       setLoading(false);
       return;
     }
-
     setLoading(true);
-    axiosClient
-      .get(`/reservations/my?professorId=${user.id}`)
-      .then(({ data }) => {
-        const mapped: Reservation[] = data.map((r: any) => {
-          let status = String(r.status).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          if (status === "rejeitado") status = "reprovado";
-
-          return {
-            id: r.idReserva,
-            date: new Date(r.data_hora_inicio).toLocaleDateString("pt-BR"),
-            hours: `${new Date(r.data_hora_inicio).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })} - ${new Date(r.data_hora_fim).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}`,
-            status: status as ReservationStatus,
-            isRecurring: r.recorrente,
-            labName: r.Laboratorio?.nome || "-",
-            labLocal: r.Laboratorio?.localizacao || "-",
-            course: r.Curso?.nome || "-",
-            semester: r.Turma?.periodo_letivo || "-",
-            subject: r.Disciplina?.nome || "-",
-            notes: r.observacoes || "",
-          };
-        });
-        setReservations(mapped);
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar reservas", err);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const { data } = await axiosClient.get(
+        `/reservations/my?professorId=${user.id}`
+      );
+      const mapped: Reservation[] = data.map((r: any) => {
+        let status = String(r.status).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (status === "rejeitado") status = "reprovado";
+        return {
+          id: r.idReserva,
+          date: new Date(r.data_hora_inicio).toLocaleDateString("pt-BR"),
+          hours: `${new Date(r.data_hora_inicio).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })} - ${new Date(r.data_hora_fim).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}`,
+          status: status as ReservationStatus,
+          isRecurring: r.recorrente,
+          labName: r.Laboratorio?.nome || "-",
+          labLocal: r.Laboratorio?.localizacao || "-",
+          course: r.Curso?.nome || "-",
+          semester: r.Turma?.periodo_letivo || "-",
+          subject: r.Disciplina?.nome || "-",
+          notes: r.observacoes || "",
+        };
+      });
+      setReservations(mapped);
+    } catch (err) {
+      setReservations([]);
+      console.error("Erro ao carregar reservas", err);
+    } finally {
+      setLoading(false);
+    }
   }, [user?.id]);
 
   useEffect(() => {
-    fetchReservations();
-  }, [fetchReservations]);
+    reloadReservations();
+  }, [reloadReservations]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/auth/signin");
-    } else {
-      setLoading(false);
     }
   }, [router]);
 
@@ -107,8 +113,18 @@ export default function MyReservations() {
       if (a.status === "cancelado" && b.status !== "cancelado") return 1;
       if (b.status === "cancelado" && a.status !== "cancelado") return -1;
       // Aprovados antes das demais
-      if (a.status === "aprovado" && b.status !== "aprovado" && b.status !== "cancelado") return -1;
-      if (b.status === "aprovado" && a.status !== "aprovado" && a.status !== "cancelado") return 1;
+      if (
+        a.status === "aprovado" &&
+        b.status !== "aprovado" &&
+        b.status !== "cancelado"
+      )
+        return -1;
+      if (
+        b.status === "aprovado" &&
+        a.status !== "aprovado" &&
+        a.status !== "cancelado"
+      )
+        return 1;
       // Datas próximas no topo
       const dateA = parseDate(a.date);
       const dateB = parseDate(b.date);
@@ -122,7 +138,7 @@ export default function MyReservations() {
       <SideBar sectionIsOpen={true} />
       <div className="flex flex-col flex-12/12 overflow-y-auto items-start px-7 py-3 gap-2">
         <HeaderPage title="Minhas Reservas" />
-        <div className="w-full flex flex-col items-center max-w-270 self-center">
+        <div className="w-full flex flex-col items-center max-w-270 self-center pb-25">
           <div className="w-full flex flex-col items-center">
             <div className="flex w-full self-start relative md:mb-1 mb-4 gap-4 md:gap-6">
               <div className="flex w-full items-start">
@@ -147,7 +163,7 @@ export default function MyReservations() {
                     <AlarmClockPlus />
                   </Button>
                 </DialogTrigger>
-                <FormReservation onSuccess={fetchReservations} userId={user?.id} />
+                <FormReservation onSuccess={reloadReservations} userId={user?.id} />
               </Dialog>
             </div>
 
@@ -156,9 +172,7 @@ export default function MyReservations() {
                 Data
               </div>
               <div className="w-38 flex text-sm justify-center items-center">
-                <p className="ml-[-1.5rem]">
-                Horário
-                </p>
+                <p className="ml-[-1.5rem]">Horário</p>
               </div>
               <div className="w-74 truncate flex text-sm justify-start items-center text-foreground">
                 Laboratório
@@ -169,10 +183,8 @@ export default function MyReservations() {
               <div className="w-32 flex justify-center text-sm items-center">
                 Status
               </div>
-              <div className="w-12 flex items-center">
-              </div>
+              <div className="w-12 flex items-center"></div>
             </div>
-
 
             {loading ? (
               <br />
@@ -183,7 +195,11 @@ export default function MyReservations() {
                 </div>
             ) : (
               filteredReservations.map((reservation) => (
-                <CardReservation key={reservation.id} {...reservation} />
+                <CardReservation
+                  key={reservation.id}
+                  {...reservation}
+                  reloadReservations={reloadReservations}
+                />
               ))
             )}
           </div>
