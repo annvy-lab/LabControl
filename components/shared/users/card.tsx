@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Card } from "@/components/ui/card";
 
 type UserCardProps = {
   id: number;
@@ -37,7 +38,7 @@ export default function CardUser({
       : "text-primary/90";
 
   return (
-    <div className="w-full p-4 pb-2 md:py-2 md:px-4 mb-4 flex-col flex md:flex-row justify-center md:justify-between items-start md:items-center bg-card/70 rounded-md shadow-sm hover:-translate-y-1 hover:shadow-lg duration-300">
+    <Card className="w-full p-4 pb-2 md:py-2 md:px-4 mb-4 flex-col flex md:flex-row justify-center md:justify-between items-start md:items-center shadow-sm hover:-translate-y-1 hover:shadow-lg duration-300">
       <Dialog>
         <div className="col-span-2 flex-1 flex md:pr-4 flex-row justify-between items-center cursor-pointer">
           <DialogTrigger asChild className="focus:outline-none">
@@ -91,6 +92,6 @@ export default function CardUser({
           </Tooltip>
         </TooltipProvider>
       </div>
-    </div>
+    </Card>
   );
 }

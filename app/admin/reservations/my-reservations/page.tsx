@@ -13,11 +13,12 @@ import FormReservation from "@/components/shared/reservations/form.";
 import { useRouter } from "next/navigation";
 import { getUserFromToken } from "@/services/auth";
 
+type ReservationStatus = "pendente" | "aprovado" | "reprovado" | "rejeitado" | "cancelado" | "concluido" | "concluído";
 type Reservation = {
   id: number;
   date: string;
   hours: string;
-  status: "pendente" | "aprovado" | "reprovado" | "cancelado" | "concluído";
+  status: ReservationStatus;
   isRecurring: boolean;
   labName: string;
   labLocal: string;
@@ -26,6 +27,11 @@ type Reservation = {
   subject: string;
   notes?: string;
 };
+
+function parseDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split("/").map(Number);
+  return new Date(year < 100 ? 2000 + year : year, month - 1, day);
+}
 
 export default function MyReservations() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,29 +52,35 @@ export default function MyReservations() {
     axiosClient
       .get(`/reservations/my?professorId=${user.id}`)
       .then(({ data }) => {
-        const mapped: Reservation[] = data.map((r: any) => ({
-          id: r.idReserva,
-          date: new Date(r.data_hora_inicio).toLocaleDateString("pt-BR"),
-          hours: `${new Date(r.data_hora_inicio).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })} - ${new Date(r.data_hora_fim).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}`,
-          status: r.status,
-          isRecurring: r.recorrente,
-          labName: r.Laboratorio?.nome || "-",
-          labLocal: r.Laboratorio?.localizacao || "-",
-          course: r.Curso?.nome || "-",
-          semester: r.Turma?.periodo_letivo || "-",
-          subject: r.Disciplina?.nome || "-",
-          notes: r.observacoes || "",
-        }));
+        const mapped: Reservation[] = data.map((r: any) => {
+          let status = String(r.status).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          if (status === "rejeitado") status = "reprovado";
 
+          return {
+            id: r.idReserva,
+            date: new Date(r.data_hora_inicio).toLocaleDateString("pt-BR"),
+            hours: `${new Date(r.data_hora_inicio).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })} - ${new Date(r.data_hora_fim).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`,
+            status: status as ReservationStatus,
+            isRecurring: r.recorrente,
+            labName: r.Laboratorio?.nome || "-",
+            labLocal: r.Laboratorio?.localizacao || "-",
+            course: r.Curso?.nome || "-",
+            semester: r.Turma?.periodo_letivo || "-",
+            subject: r.Disciplina?.nome || "-",
+            notes: r.observacoes || "",
+          };
+        });
         setReservations(mapped);
       })
-      .catch(() => console.error("Erro ao carregar reservas"))
+      .catch((err) => {
+        console.error("Erro ao carregar reservas", err);
+      })
       .finally(() => setLoading(false));
   }, [user?.id]);
 
@@ -91,10 +103,15 @@ export default function MyReservations() {
       return searchableContent.includes(searchTerm.toLowerCase());
     })
     .sort((a, b) => {
-      const [da, ma, ya] = a.date.split("/").map(Number);
-      const [db, mb, yb] = b.date.split("/").map(Number);
-      const dateA = new Date(2000 + ya, ma - 1, da);
-      const dateB = new Date(2000 + yb, mb - 1, db);
+      // Canceladas no fim
+      if (a.status === "cancelado" && b.status !== "cancelado") return 1;
+      if (b.status === "cancelado" && a.status !== "cancelado") return -1;
+      // Aprovados antes das demais
+      if (a.status === "aprovado" && b.status !== "aprovado" && b.status !== "cancelado") return -1;
+      if (b.status === "aprovado" && a.status !== "aprovado" && a.status !== "cancelado") return 1;
+      // Datas próximas no topo
+      const dateA = parseDate(a.date);
+      const dateB = parseDate(b.date);
       return dateA.getTime() - dateB.getTime();
     });
 
@@ -134,33 +151,35 @@ export default function MyReservations() {
               </Dialog>
             </div>
 
-            <div className="w-full hidden md:flex flex-row py-3 pl-4 items-center">
-              <div className="ml-4 w-35 truncate pl-1 flex text-sm justify-start text-start items-center text-foreground">
+            <div className="w-full hidden md:flex flex-row py-3 items-center gap-10 px-4">
+              <div className="w-25 truncate flex text-sm justify-center items-center text-foreground">
                 Data
               </div>
-              <div className="ml-4 w-41.5 flex text-sm justify-start text-start items-center">
+              <div className="w-38 flex text-sm justify-center items-center">
+                <p className="ml-[-1.5rem]">
                 Horário
+                </p>
               </div>
-              <div className="w-81.5 truncate flex justify-start text-sm text-start items-center text-foreground">
+              <div className="w-74 truncate flex text-sm justify-start items-center text-foreground">
                 Laboratório
               </div>
-              <div className="w-32 pl-3 truncate flex justify-start text-sm text-start items-center text-foreground">
+              <div className="w-18 truncate flex text-sm items-center text-foreground">
                 Local
               </div>
-              <div className="w-32 text-sm flex justify-start text-start items-center">
+              <div className="w-32 flex justify-center text-sm items-center">
                 Status
               </div>
-              <div className="w-31 truncate flex text-sm items-center text-foreground">
-                <br className="hidden" />
+              <div className="w-12 flex items-center">
               </div>
             </div>
+
 
             {loading ? (
               <br />
             ) : filteredReservations.length === 0 ? (
-                <div className="flex flex-col gap-2 text-muted-foreground mt-6 items-center justify-center">
+                <div className="flex flex-col gap-2 text-foreground mt-6 items-center justify-center">
                   <CalendarX2 size={70} strokeWidth={1.2} />
-                  Você ainda não possui nenhuma reserva.
+                  Nenhuma reserva encontrada...
                 </div>
             ) : (
               filteredReservations.map((reservation) => (

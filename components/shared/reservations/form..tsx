@@ -29,14 +29,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
-import { AlarmClockPlus, CalendarIcon, CircleHelp } from "lucide-react";
+import { AlarmClockPlus, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { VerticalProgress } from "../../ui/vertical-progress-bar";
@@ -74,10 +67,12 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
   const [courses, setCourses] = useState<{ value: string; label: string }[]>([]);
   const [subjects, setSubjects] = useState<{ value: string; label: string }[]>([]);
   const [semesters, setSemesters] = useState<{ value: string; label: string }[]>([]);
+  const [coursesFull, setCoursesFull] = useState<any[]>([]); // salva a resposta bruta dos cursos
   const [date, setDate] = useState<Date>();
   const [recurring, setRecurring] = useState(false);
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
   const user = getUserFromToken();
+  const userId = user?.id;
 
   useEffect(() => {
     axiosClient.get("/lab/labs").then(({ data }) => {
@@ -88,43 +83,56 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       setLabs(mapped);
     });
 
-    axiosClient.get("/course/courses").then(({ data }) => {
-      const mapped = data.map((course: any) => ({
+    if (userId) {
+      axiosClient.get(`/course/professor/${user.id}/courses`).then(({ data }) => {
+        console.log("Resposta da API /course/professor/:id/courses:", data); // 👈 Aqui!
+        setCoursesFull(data);
+        setCourses(data.map((course: any) => ({
         value: String(course.idCurso),
         label: course.nome,
-      }));
-      setCourses(mapped);
+        })));
     });
-  }, []);
+    }
+  }, [userId]);
+
 
   useEffect(() => {
-    const id = formValues.course;
-    if (!id) return;
-
-    axiosClient.get(`/subject/course/${id}/disciplinas`).then(({ data }) => {
-      const mapped = data.map((d: any) => ({
-        value: String(d.idDisciplina),
-        label: d.nome,
-      }));
-      setSubjects(mapped);
-      setValue("subject", "");
+    const courseId = formValues.course;
+    if (!courseId) {
+      setSubjects([]);
       setSemesters([]);
-    });
-  }, [formValues.course]);
+      setValue("subject", "");
+      setValue("turma", "");
+      return;
+    }
+    const courseObj = coursesFull.find((c) => String(c.idCurso) === courseId);
+    setSubjects((courseObj?.Disciplina || []).map((d: any) => ({
+      value: String(d.idDisciplina),
+      label: d.nome,
+    })));
+    setSemesters([]);
+    setValue("subject", "");
+    setValue("turma", "");
+  }, [formValues.course, coursesFull, setValue]);
 
   useEffect(() => {
-    const id = formValues.subject;
-    if (!id) return;
-
-    axiosClient.get(`/class/subject/${id}/turmas`).then(({ data }) => {
-      const mapped = data.map((turma: any) => ({
-        value: String(turma.idTurma),
-        label: `${turma.nome} - ${turma.periodo_letivo}`,
-      }));
-      setSemesters(mapped);
+    const courseId = formValues.course;
+    const subjectId = formValues.subject;
+    if (!courseId || !subjectId) {
+      setSemesters([]);
       setValue("turma", "");
-    });
-  }, [formValues.subject]);
+      return;
+    }
+    const courseObj = coursesFull.find((c) => String(c.idCurso) === courseId);
+    const subjectObj = (courseObj?.Disciplina || []).find(
+      (d: any) => String(d.idDisciplina) === subjectId
+    );
+    setSemesters((subjectObj?.Turmas || []).map((turma: any) => ({
+      value: String(turma.idTurma),
+      label: `${turma.nome} - ${turma.periodo_letivo}`,
+    })));
+    setValue("turma", "");
+  }, [formValues.subject, formValues.course, coursesFull, setValue]);
 
   const onSubmit = async (data: FormData) => {
     if (!date) {
@@ -164,7 +172,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       idTurma: Number(data.turma),
       idCurso: Number(data.course),
       idDisciplina: Number(data.subject),
-      idProfessor: user?.id,
+      idProfessor: userId,
       recorrente: Boolean(recurring),
     };
 
@@ -268,22 +276,6 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex flex-col col-span-2 gap-3.5">
-                  <div className="flex flex-row gap-2">
-                    <Label>Recorrente:</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <CircleHelp size={16} className="text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>A reserva irá se repetir toda semana,<br />no mesmo dia e horário.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <Switch checked={recurring} onCheckedChange={setRecurring} />
-                </div>
               </div>
               <div className="grid grid-cols-7 gap-3 md:gap-6 w-full">
                 <div className="flex flex-col col-span-5 gap-2">
@@ -318,7 +310,7 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
                     </SelectContent>
                   </Select>
                 </div>
-                                <div className="flex flex-col col-span-2 gap-2">
+                <div className="flex flex-col col-span-2 gap-2">
                   <Label>Turma: <p className="text-red-800">*</p></Label>
                   <Select value={formValues.turma} onValueChange={(value) => setValue("turma", value)}>
                     <SelectTrigger className="w-full justify-between truncate bg-card hover:bg-card border-input">
