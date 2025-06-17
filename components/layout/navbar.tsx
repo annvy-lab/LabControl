@@ -95,7 +95,7 @@ export default function SideBar({ sectionIsOpen = false }: SideBarProps) {
             <div>Laboratórios</div>
           </a>
           {(user?.tipo !== "professor" && user?.tipo !== "tecnico") && (
-          <a href="/admin/cousers" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
+          <a href="/admin/courses" className="focus:outline-none flex gap-6 w-54 h-10 items-center justify-start text-sm mb-1 rounded-[0.30rem] hover:border-r-4 transition-all duration-75">
             <GraduationCap size={20} />
             <div>Cursos</div>
           </a>
