@@ -69,7 +69,7 @@ export default function Users() {
               <span className="col-span-3 text-sm text-foreground ml-2">Nome</span>
               <span className="col-span-3 text-sm text-foreground">E-mail</span>
               <span className="col-span-2 text-sm text-foreground">Tipo</span>
-              <span className="col-span-1 text-sm text-foreground">Ativo</span>
+              <span className="col-span-2 text-sm text-foreground text-end pr-5">Ativo</span>
             </div>
           </div>
           {filteredUsers.length === 0 ? (

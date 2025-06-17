@@ -21,19 +21,26 @@ export default function SignIn() {
     try {
       const data = await login(email, senha);
 
-      if (data?.acessToken) {
-        localStorage.setItem("token", data.acessToken);
-        toast.success("Login realizado com sucesso!");
-        router.push("/admin/dashboard");
-      } else {
-        toast.error("Erro inesperado no login.");
-      }
-    } catch (err: any) {
-      toast.error("E-mail ou senha inválidos.");
-    } finally {
-      setLoading(false);
+    if (data?.acessToken) {
+      localStorage.setItem("token", data.acessToken);
+      toast.success("Login realizado com sucesso!");
+      router.push("/admin/dashboard");
+    } else {
+      toast.error("Credenciais inválidas.");
     }
-  };
+  } catch (err: any) {
+    let msg =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      "E-mail ou senha inválidos.";
+    if (Array.isArray(msg)) msg = msg.join(" ");
+    toast.error(msg);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">

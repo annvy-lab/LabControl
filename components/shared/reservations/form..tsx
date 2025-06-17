@@ -113,7 +113,6 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
     setValue("turma", "");
   }, [formValues.course, coursesFull, setValue]);
 
-  // Aqui está o ajuste para buscar as turmas corretamente do Turma_Disciplina:
   useEffect(() => {
     const courseId = formValues.course;
     const subjectId = formValues.subject;
@@ -127,7 +126,6 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       (d: any) => String(d.idDisciplina) === subjectId
     );
 
-    // Busca as turmas do array Turma_Disciplina da disciplina selecionada
     const turmas =
       (subjectObj?.Turma_Disciplina || [])
         .map((td: any) => td.Turma)
@@ -194,13 +192,19 @@ export default function FormReservation({ onSuccess }: { onSuccess?: () => void 
       dialogCloseRef.current?.click();
       onSuccess?.();
     } catch (error: any) {
-      console.error("Erro ao criar reserva:", {
-        message: error.message,
-        status: error?.response?.status,
-        data: error?.response?.data,
-        payload,
-      });
-      toast.error("Erro ao criar a reserva.");
+    let msg =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "Erro ao criar a reserva.";
+    if (Array.isArray(msg)) msg = msg.join(" ");
+    toast.error(msg);
+    console.error("Erro ao criar reserva:", {
+      message: msg,
+      status: error?.response?.status,
+      data: error?.response?.data,
+      payload,
+    });
     }
   };
 

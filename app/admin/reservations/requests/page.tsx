@@ -139,7 +139,7 @@ export default function ManagerReservations() {
         motivo: rejectionReason,
         aprovadorId: user?.id,
       })
-      toast.error("Reserva reprovada! O responsável será notificado com o motivo.")
+      toast("Reserva reprovada! O responsável será notificado com o motivo.")
       setRejectDialogOpen(false)
       setRejectionReason("")
       setSelectedRequest(null)
